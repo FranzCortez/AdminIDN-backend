@@ -1,5 +1,5 @@
 import express from "express";
-import { crearUsuario } from "../controllers/usuarioController.js";
+import { crearUsuario, editarUsuario } from "../controllers/usuarioController.js";
 
 const router = express.Router();
 
@@ -7,6 +7,9 @@ const router = express.Router();
 
 // crear usuario
 router.post('/usuario', crearUsuario);
+
+// editar usuario especifico por ID
+router.get('/usuario/:id', editarUsuario);
 
 
 

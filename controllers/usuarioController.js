@@ -33,10 +33,24 @@ const crearUsuario = async (req, res, next) => {
         console.log(error);
         res.json({ msg: 'Error al crear el usuario, intente nuevamente'});
     }
+}
 
+// editar usuario
+const editarUsuario = async (req, res, next) => {
 
+    // TODO: revisar permisos
+
+    const usuario = await Usuario.scope('eliminarPass').findByPk(req.params.id);
+
+    if(!usuario){
+        res.json({ msg: 'Usuario no existe'});
+        return next();
+    }
+
+    res.json(usuario);
 }
 
 export{ 
-    crearUsuario
+    crearUsuario,
+    editarUsuario
 }
