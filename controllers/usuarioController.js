@@ -102,9 +102,25 @@ const editarUsuario = async (req, res, next) => {
     res.json({msg: `Usuario ${nombre} fue actualizado correctamente!`});
 }
 
+// eliminar usuario
+const eliminarUsuario = async (req, res, next) => {
+
+    // TODO: revisar permisos
+
+    const usuario = await Usuario.destroy({ where: {id: req.params.id}});
+
+    if(!usuario){
+        res.json({ msg: 'Usuario no existe'});
+        return next();
+    }
+
+    res.json({ msg: 'Usuario Eliminado Correctamente'});
+}
+
 export{ 
     crearUsuario,
     todosUsuarios,
     encontrarUsuario,
-    editarUsuario
+    editarUsuario,
+    eliminarUsuario
 }
