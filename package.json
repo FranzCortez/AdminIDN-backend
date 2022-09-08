@@ -1,0 +1,38 @@
+{
+  "name": "backend-idn",
+  "version": "1.0.0",
+  "description": "sistema de adminstración para empresa \"Impacto del Norte\"",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "dev": "nodemon ./index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/FranzCortez/AdminIDN-backend.git"
+  },
+  "keywords": [
+    "node",
+    "express",
+    "sql",
+    "mysql"
+  ],
+  "author": "Franz Cortez Olmedo",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/FranzCortez/AdminIDN-backend/issues"
+  },
+  "homepage": "https://github.com/FranzCortez/AdminIDN-backend#readme",
+  "dependencies": {
+    "bcrypt": "^5.0.1",
+    "dotenv": "^16.0.2",
+    "express": "^4.18.1",
+    "jsonwebtoken": "^8.5.1",
+    "mysql": "^2.18.1",
+    "mysql2": "^2.3.3",
+    "sequelize": "^6.21.4"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.19"
+  }
+}
