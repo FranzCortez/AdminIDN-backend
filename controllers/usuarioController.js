@@ -35,8 +35,17 @@ const crearUsuario = async (req, res, next) => {
     }
 }
 
-// editar usuario
-const editarUsuario = async (req, res, next) => {
+// obtener todos los usuarios
+const todosUsuarios = async (req, res, next) => {
+    // TODO: revisar permisos
+
+    const usuarios = await Usuario.scope('eliminarPass').findAll({});
+
+    res.json(usuarios);
+}
+
+// obtener usuario por ID
+const encontrarUsuario = async (req, res, next) => {
 
     // TODO: revisar permisos
 
@@ -52,5 +61,6 @@ const editarUsuario = async (req, res, next) => {
 
 export{ 
     crearUsuario,
-    editarUsuario
+    todosUsuarios,
+    encontrarUsuario
 }
