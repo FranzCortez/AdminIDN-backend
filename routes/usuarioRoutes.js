@@ -14,10 +14,10 @@ router.get('/usuario', todosUsuarios);
 // obtner usuario especifico por ID
 router.get('/usuario/:id', encontrarUsuario);
 
-// editar usuario
+// editar usuario por id
 router.post('/usuario/:id', editarUsuario);
 
-// eliminar usuario
+// eliminar usuario por id
 router.delete('/usuario/:id', eliminarUsuario);
 
 export default router;
