@@ -1,5 +1,5 @@
 import express from "express";
-import { crearUsuario, todosUsuarios, encontrarUsuario } from "../controllers/usuarioController.js";
+import { crearUsuario, todosUsuarios, encontrarUsuario, editarUsuario } from "../controllers/usuarioController.js";
 
 const router = express.Router();
 
@@ -13,5 +13,9 @@ router.get('/usuario', todosUsuarios);
 
 // obtner usuario especifico por ID
 router.get('/usuario/:id', encontrarUsuario);
+
+// editar usuario
+router.post('/usuario/:id', editarUsuario);
+
 
 export default router;

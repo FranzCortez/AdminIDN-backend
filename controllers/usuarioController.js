@@ -1,3 +1,4 @@
+import bcrypt from "bcrypt";
 import Usuario from "../models/Usuario.js";
 
 // crea a un usuario nuevo
@@ -59,8 +60,51 @@ const encontrarUsuario = async (req, res, next) => {
     res.json(usuario);
 }
 
+// Edita a un usuario
+const editarUsuario = async (req, res, next) => {
+
+    // TODO: revisar permisos
+
+    const { nombre, rut, email, tipo, telefono } = req.body; 
+
+    if(!nombre || !rut || !email || !tipo || tipo < 0 || tipo > 3){
+        res.json({msg: 'Todos los campos son necesarios'});
+        return next();
+    }
+
+    const usuario = await Usuario.scope('eliminarPass').findByPk(req.params.id);
+
+    if(!usuario){
+        res.json({ msg: 'Usuario no existe'});
+        return next();
+    }
+
+    const rutLimpio = rut.split(".").join("").split("-").join("");
+
+    if(usuario.nombre != nombre || usuario.rut != rut){
+
+        const invertirRut = rutLimpio.split("").reverse().join("");
+
+        const password = invertirRut + '@' + nombre.split(" ")[0];
+
+        const salt = await bcrypt.genSalt(12);
+        usuario.password = await bcrypt.hash( password, salt );
+    }
+
+    usuario.nombre = nombre;
+    usuario.rut = parseInt(rutLimpio);
+    usuario.email = email;
+    usuario.tipo = tipo;
+    usuario.telefono = telefono;
+
+    await usuario.save();
+
+    res.json({msg: `Usuario ${nombre} fue actualizado correctamente!`});
+}
+
 export{ 
     crearUsuario,
     todosUsuarios,
-    encontrarUsuario
+    encontrarUsuario,
+    editarUsuario
 }
