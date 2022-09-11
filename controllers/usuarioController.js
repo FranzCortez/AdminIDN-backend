@@ -1,5 +1,7 @@
 import bcrypt from "bcrypt";
 import Usuario from "../models/Usuario.js";
+import Sequelize from "sequelize"
+const Op = Sequelize.Op;
 
 // crea a un usuario nuevo
 const crearUsuario = async (req, res, next) => {
@@ -9,7 +11,7 @@ const crearUsuario = async (req, res, next) => {
     const { nombre, rut, email, tipo, telefono } = req.body;
 
     if(!nombre || !rut || !email || !tipo || tipo < 0 || tipo > 3){
-        res.json({msg: 'Faltan datos'});
+        res.status(404).json({msg: 'Faltan datos'});
         return next();
     }
 
@@ -20,19 +22,27 @@ const crearUsuario = async (req, res, next) => {
     const password = invertirRut + '@' + nombre.split(" ")[0];
     
     try {
+
+        const validarUsuario = await Usuario.findOne({ where: {rut : rutLimpio} });
+
+        if(validarUsuario){
+            res.status(501).json({msg: 'Ese usuario ya existe en el sistema'});
+            return next();
+        }
+
         await Usuario.create({
             nombre,
-            rut: parseInt(rutLimpio),
+            rut: rutLimpio,
             password,
             telefono,
             email,
             tipo
         });
 
-        res.json({ msg: `Usuario ${nombre} creado correctamente!`});
+        res.status(200).json({ msg: `Usuario ${nombre} creado correctamente!`});
     } catch (error) {
         console.log(error);
-        res.json({ msg: 'Error al crear el usuario, intente nuevamente'});
+        res.status(404).json({ msg: 'Error al crear el usuario, intente nuevamente'});
     }
 }
 
@@ -53,7 +63,7 @@ const encontrarUsuario = async (req, res, next) => {
     const usuario = await Usuario.scope('eliminarPass').findByPk(req.params.id);
 
     if(!usuario){
-        res.json({ msg: 'Usuario no existe'});
+        res.status(404).json({ msg: 'Usuario no existe'});
         return next();
     }
 
@@ -68,14 +78,14 @@ const editarUsuario = async (req, res, next) => {
     const { nombre, rut, email, tipo, telefono } = req.body; 
 
     if(!nombre || !rut || !email || !tipo || tipo < 0 || tipo > 3){
-        res.json({msg: 'Todos los campos son necesarios'});
+        res.status(501).json({msg: 'Todos los campos son necesarios'});
         return next();
     }
 
     const usuario = await Usuario.scope('eliminarPass').findByPk(req.params.id);
 
     if(!usuario){
-        res.json({ msg: 'Usuario no existe'});
+        res.status(404).json({ msg: 'Usuario no existe'});
         return next();
     }
 
@@ -99,7 +109,7 @@ const editarUsuario = async (req, res, next) => {
 
     await usuario.save();
 
-    res.json({msg: `Usuario ${nombre} fue actualizado correctamente!`});
+    res.status(200).json({msg: `Usuario ${nombre} fue actualizado correctamente!`});
 }
 
 // eliminar usuario
@@ -110,11 +120,30 @@ const eliminarUsuario = async (req, res, next) => {
     const usuario = await Usuario.destroy({ where: {id: req.params.id}});
 
     if(!usuario){
-        res.json({ msg: 'Usuario no existe'});
+        res.status(404).json({ msg: 'Usuario no existe'});
         return next();
     }
 
-    res.json({ msg: 'Usuario Eliminado Correctamente'});
+    res.status(200).json({ msg: 'Usuario Eliminado Correctamente'});
+}
+
+const buscarPorNombre = async (req, res, next) => {
+
+    const nombreBuscar = req.params.nombre;
+
+    if(nombreBuscar.length <= 0) {
+        res.status(404).json({ msg: 'Mínimo debe tener 3 letras para poder buscar'});
+        return next();
+    }
+
+    const usuarios = await Usuario.findAll( { nombre: { [Op.like] : `%${req.params.nombre}%` }});
+
+    if(!usuarios) {
+        res.status(404).json({ msg: 'No existe ningún usuario con ese nombre'});
+        return next();
+    }
+
+    res.status(200).json({usuarios});
 }
 
 export{ 
@@ -122,5 +151,6 @@ export{
     todosUsuarios,
     encontrarUsuario,
     editarUsuario,
-    eliminarUsuario
+    eliminarUsuario,
+    buscarPorNombre
 }

@@ -1,5 +1,5 @@
 import express from "express";
-import { crearUsuario, todosUsuarios, encontrarUsuario, editarUsuario, eliminarUsuario } from "../controllers/usuarioController.js";
+import { crearUsuario, todosUsuarios, encontrarUsuario, editarUsuario, eliminarUsuario, buscarPorNombre } from "../controllers/usuarioController.js";
 
 const router = express.Router();
 
@@ -19,5 +19,7 @@ router.post('/usuario/:id', editarUsuario);
 
 // eliminar usuario por id
 router.delete('/usuario/:id', eliminarUsuario);
+
+router.get('/usuarioBuscar/:nombre', buscarPorNombre);
 
 export default router;
