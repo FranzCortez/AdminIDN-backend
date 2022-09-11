@@ -131,12 +131,14 @@ const buscarPorNombre = async (req, res, next) => {
 
     const nombreBuscar = req.params.nombre;
 
-    if(nombreBuscar.length <= 0) {
+    if(nombreBuscar.length < 3) {
         res.status(404).json({ msg: 'Mínimo debe tener 3 letras para poder buscar'});
         return next();
     }
 
-    const usuarios = await Usuario.findAll( { nombre: { [Op.like] : `%${req.params.nombre}%` }});
+    console.log(nombreBuscar)
+
+    const usuarios = await Usuario.findAll( { where: {nombre : { [Op.like] : '%'+ nombreBuscar +'%'} }});
 
     if(!usuarios) {
         res.status(404).json({ msg: 'No existe ningún usuario con ese nombre'});
