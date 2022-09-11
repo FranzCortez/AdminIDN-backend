@@ -20,12 +20,9 @@ app.use( bodyParser.json());
 const whitelist = [process.env.FRONTEND_URL];
 const corsOptions = {
     origin: (origin, cb) => {
-        console.log(origin);
+        //console.log(origin);
         
-        const existe = whitelist.some( dominio => {
-            console.log(dominio)
-            return dominio === origin
-        });
+        const existe = whitelist.some( dominio =>  dominio === origin);
         
         if( existe) {
             cb(null, true);
