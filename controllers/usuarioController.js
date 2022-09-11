@@ -136,9 +136,7 @@ const buscarPorNombre = async (req, res, next) => {
         return next();
     }
 
-    console.log(nombreBuscar)
-
-    const usuarios = await Usuario.findAll( { where: {nombre : { [Op.like] : '%'+ nombreBuscar +'%'} }});
+    const usuarios = await Usuario.scope('eliminarPass').findAll( { where: {nombre : { [Op.like] : '%'+ nombreBuscar +'%'} }});
 
     if(!usuarios) {
         res.status(404).json({ msg: 'No existe ningún usuario con ese nombre'});
