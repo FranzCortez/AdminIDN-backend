@@ -67,6 +67,24 @@ const obtenerContactosPorEmpresa = async (req, res, next) => {
     res.status(200).json(contactos);
 }
 
+const obtenerContactoEspecifico = async (req, res, next) => {
+
+    console.log(req.params)
+
+    const { idEmpresa, id } = req.params;
+
+    const empresa = await ClienteEmpresa.findByPk(idEmpresa);
+
+    if(!empresa){
+        res.status(404).json({ msg: 'Empresa no existe'});
+        return next();
+    }
+
+    const contacto = await ClienteContacto.findOne({ where: { clienteEmpresaId : idEmpresa, id} });
+
+    res.status(200).json(contacto);
+}
+
 // actualizar la informacion de 1 usuario especifico
 const actualizarContactoEmpresa = async (req, res, next) => {
 
@@ -135,6 +153,7 @@ const eliminarContactoEmpresa = async (req, res, next) => {
 export {
     crearClienteContacto,
     obtenerContactosPorEmpresa,
+    obtenerContactoEspecifico,
     actualizarContactoEmpresa,
     eliminarContactoEmpresa
 }
