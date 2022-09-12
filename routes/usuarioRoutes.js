@@ -9,7 +9,7 @@ const router = express.Router();
 router.post('/usuario', crearUsuario);
 
 // obtener usuarios
-router.get('/usuario', todosUsuarios);
+router.get('/usuario/:pag', todosUsuarios);
 
 // obtner usuario especifico por ID
 router.get('/usuario/:id', encontrarUsuario);

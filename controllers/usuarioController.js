@@ -50,11 +50,13 @@ const crearUsuario = async (req, res, next) => {
 const todosUsuarios = async (req, res, next) => {
     // TODO: revisar permisos
 
-    const offset = (parseInt(req.body.offset) || 0) * 10;
+    const offset = (parseInt(req.params.pag) || 0) * 10;
 
     const usuarios = await Usuario.scope('eliminarPass').findAll({ offset: offset, limit: 10});
 
-    res.json(usuarios);
+    const cantUsuarios = await Usuario.scope('eliminarPass').findAll({});
+
+    res.json({usuarios, cantPag: Math.ceil(cantUsuarios.length / 10)});
 }
 
 // obtener usuario por ID
