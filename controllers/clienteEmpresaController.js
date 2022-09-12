@@ -43,9 +43,13 @@ const nuevoClienteEmpresa = async (req, res, next) => {
 // obtiene todas las empresas
 const todosClienteEmpresa = async (req, res) => {
 
-    const empresas = await ClienteEmpresa.findAll({});
+    const offset = (parseInt(req.params.pag) || 0) * 10;
 
-    res.status(200).json(empresas);
+    const empresas = await ClienteEmpresa.findAll({ offset: offset, limit: 10});
+
+    const cantEmpresas = await ClienteEmpresa.findAll({});
+
+    res.status(200).json({empresas, cantPag: Math.ceil(cantEmpresas.length / 10)});
 }
 
 // obtiene una empresa por el  ID

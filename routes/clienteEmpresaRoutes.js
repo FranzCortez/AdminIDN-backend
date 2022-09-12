@@ -7,7 +7,7 @@ const router = express.Router();
 router.post('/empresa', nuevoClienteEmpresa);
 
 // obtener todos los clientes empresa
-router.get('/empresa', todosClienteEmpresa);
+router.get('/empresa/:pag', todosClienteEmpresa);
 
 // obtener empresa por id
 router.get('/empresa/:id', encontrarClienteEmpresa);
