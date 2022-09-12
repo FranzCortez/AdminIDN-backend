@@ -1,5 +1,7 @@
 import ClienteEmpresa from "../models/ClienteEmpresa.js";
 import ClienteContacto from "../models/ClienteContacto.js";
+import Sequelize from "sequelize"
+const Op = Sequelize.Op;
 
 // agrega un nuevo cliente empresa y retorna la id
 const nuevoClienteEmpresa = async (req, res, next) => {
@@ -31,7 +33,7 @@ const nuevoClienteEmpresa = async (req, res, next) => {
             direccion
         });
 
-        res.status(200).json({ msg: `Cliente ${razonSocial} creada correctamente!`, id: empresa.dataValues.id});
+        res.status(200).json({ msg: `Cliente ${nombreEmpresa} creada correctamente!`, id: empresa.dataValues.id});
     } catch (error) {
         console.log(error);
         res.status(400).json({ msg: 'Error, vuelva a intentar'});
@@ -85,7 +87,7 @@ const actualizarClienteEmpresa = async (req, res, next) => {
 
     await empresa.save();
 
-    res.status(200).json({msg: `${razonSocial} fue actualizado correctamente!`});
+    res.status(200).json({msg: `${nombreEmpresa} fue actualizado correctamente!`});
 }
 
 // elimina un cliente empresa por ID
@@ -108,10 +110,31 @@ const eliminarClienteEmpresa = async (req, res) => {
 
 }
 
+// busca una empresa por el nombre
+const buscarPorNombre = async (req, res, next) => {
+
+    const nombreBuscar = req.params.nombre;
+
+    if(nombreBuscar.length < 3) {
+        res.status(404).json({ msg: 'Mínimo debe tener 3 letras para poder buscar'});
+        return next();
+    }
+
+    const empresa = await ClienteEmpresa.findAll( { where: {nombre : { [Op.like] : '%'+ nombreBuscar +'%'} }});
+
+    if(!empresa) {
+        res.status(404).json({ msg: 'No existe ningún usuario con ese nombre'});
+        return next();
+    }
+
+    res.status(200).json(empresa);
+}
+
 export {
     nuevoClienteEmpresa,
     todosClienteEmpresa,
     encontrarClienteEmpresa,
     actualizarClienteEmpresa,
-    eliminarClienteEmpresa
+    eliminarClienteEmpresa,
+    buscarPorNombre
 }

@@ -143,7 +143,7 @@ const buscarPorNombre = async (req, res, next) => {
         return next();
     }
 
-    res.status(200).json({usuarios});
+    res.status(200).json(usuarios);
 }
 
 export{ 
