@@ -1,5 +1,5 @@
 import express from "express";
-import { nuevoClienteEmpresa, todosClienteEmpresa, encontrarClienteEmpresa } from "../controllers/clienteEmpresaController.js";
+import { nuevoClienteEmpresa, todosClienteEmpresa, encontrarClienteEmpresa, actualizarClienteEmpresa } from "../controllers/clienteEmpresaController.js";
 
 const router = express.Router();
 
@@ -10,6 +10,9 @@ router.post('/empresa', nuevoClienteEmpresa);
 router.get('/empresa', todosClienteEmpresa);
 
 // obtener empresa por id
-router.get('/emrpesa/:id', encontrarClienteEmpresa);
+router.get('/empresa/:id', encontrarClienteEmpresa);
+
+// actualizar datos de empresa
+router.put('/empresa/:id', actualizarClienteEmpresa);
 
 export default router;
