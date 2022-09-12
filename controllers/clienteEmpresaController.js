@@ -1,4 +1,5 @@
 import ClienteEmpresa from "../models/ClienteEmpresa.js";
+import ClienteContacto from "../models/ClienteContacto.js";
 
 // agrega un nuevo cliente empresa y retorna la id
 const nuevoClienteEmpresa = async (req, res, next) => {
@@ -87,9 +88,30 @@ const actualizarClienteEmpresa = async (req, res, next) => {
     res.status(200).json({msg: `${razonSocial} fue actualizado correctamente!`});
 }
 
+// elimina un cliente empresa por ID
+const eliminarClienteEmpresa = async (req, res) => {
+
+    const clientesContactoEmpresa = await ClienteContacto.findAll({ where: { clienteEmpresaId: req.params.id }});
+
+    clientesContactoEmpresa.forEach( async (contacto) => {
+        await ClienteContacto.destroy({ where: {id: contacto.id}});
+    });
+
+    const empresa = await ClienteEmpresa.destroy({ where: {id: req.params.id}});
+
+    if(!empresa){
+        res.status(404).json({ msg: 'Empresa no existe'});
+        return next();
+    }
+
+    res.status(200).json({ msg: 'Empresa Eliminada Correctamente'});
+
+}
+
 export {
     nuevoClienteEmpresa,
     todosClienteEmpresa,
     encontrarClienteEmpresa,
-    actualizarClienteEmpresa
+    actualizarClienteEmpresa,
+    eliminarClienteEmpresa
 }
