@@ -4,6 +4,8 @@ import cors from "cors";
 
 import publicRoutes from "./routes/publicRoutes.js";
 import usuarioRoutes from "./routes/usuarioRoutes.js";
+import clienteEmpresaRoutes from "./routes/clienteEmpresaRoutes.js";
+import clienteContactoRoutes from "./routes/clienteContactoRoutes.js";
 import db from "./config/db.js";
 
 //App
@@ -45,6 +47,8 @@ try {
 // Routing
 app.use('/', publicRoutes);
 app.use('/api/cuentas', usuarioRoutes);
+app.use('/api/empresas', clienteEmpresaRoutes);
+app.use('/api/contactos', clienteContactoRoutes);
 
 // Puerto
 const port = process.env.PORT || 5000;
