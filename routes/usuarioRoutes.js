@@ -12,10 +12,10 @@ router.post('/usuario', crearUsuario);
 router.get('/usuario/:pag', todosUsuarios);
 
 // obtner usuario especifico por ID
-router.get('/usuario/:id', encontrarUsuario);
+router.get('/usuario/editar/:id', encontrarUsuario);
 
 // editar usuario por id
-router.post('/usuario/:id', editarUsuario);
+router.put('/usuario/:id', editarUsuario);
 
 // eliminar usuario por id
 router.delete('/usuario/:id', eliminarUsuario);
