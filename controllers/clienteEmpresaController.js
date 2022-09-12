@@ -45,7 +45,23 @@ const todosClienteEmpresa = async (req, res) => {
     res.status(200).json(empresas);
 }
 
+// obtiene una empresa por el  ID
+const encontrarClienteEmpresa = async (req, res, next) => {
+
+    // TODO: revisar permisos
+
+    const empresa = await ClienteEmpresa.findByPk(req.params.id);
+
+    if(!empresa){
+        res.status(404).json({ msg: 'Empresa no existe'});
+        return next();
+    }
+
+    res.status(200).json(empresa);
+}
+
 export {
     nuevoClienteEmpresa,
-    todosClienteEmpresa
+    todosClienteEmpresa,
+    encontrarClienteEmpresa
 }
