@@ -50,7 +50,9 @@ const crearUsuario = async (req, res, next) => {
 const todosUsuarios = async (req, res, next) => {
     // TODO: revisar permisos
 
-    const usuarios = await Usuario.scope('eliminarPass').findAll({});
+    const offset = (parseInt(req.body.offset) || 0) * 10;
+
+    const usuarios = await Usuario.scope('eliminarPass').findAll({ offset: offset, limit: 10});
 
     res.json(usuarios);
 }
