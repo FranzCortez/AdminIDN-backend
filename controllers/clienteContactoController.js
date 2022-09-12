@@ -50,7 +50,25 @@ const crearClienteContacto = async (req, res, next) => {
     }
 }
 
+// obtener todos los contactos de una empresa especifica por id
+
+const obtenerContactosPorEmpresa = async (req, res, next) => {
+
+    const { idEmpresa: id } = req.params;
+
+    const empresa = await ClienteEmpresa.findByPk(id);
+    
+    if(!empresa){
+        res.status(404).json({ msg: 'Empresa no existe'});
+        return next();
+    }
+
+    const contactos = await ClienteContacto.findAll({ where: { clienteEmpresaId: id } });
+
+    res.status(200).json(contactos);
+}
 
 export {
-    crearClienteContacto
+    crearClienteContacto,
+    obtenerContactosPorEmpresa
 }
