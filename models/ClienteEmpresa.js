@@ -18,6 +18,8 @@ const ClienteEmpresa = db.define('clienteEmpresa',{
         type: DataTypes.STRING,
         allowNull: false
     },
+}, {
+    timestamps: false
 });
 
 export default ClienteEmpresa;
