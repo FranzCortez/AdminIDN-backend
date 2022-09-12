@@ -103,8 +103,38 @@ const actualizarContactoEmpresa = async (req, res, next) => {
     res.status(200).json({ msg: `Contacto ${nombre} fue actualizado correctamente` });    
 }
 
+// eliminar contacto de 1 empresa
+const eliminarContactoEmpresa = async (req, res, next) => {
+
+    const { idEmpresa: id } = req.params;
+
+    const empresa = await ClienteEmpresa.findByPk(id);
+
+    if(!empresa){
+        res.status(404).json({ msg: 'Empresa no existe'});
+        return next();
+    }
+
+    const contactosEmpresa = await ClienteContacto.findAll({ where: { clienteEmpresaId: id } });
+
+    if(contactosEmpresa.length === 1) {
+        res.status(400).json({ msg: 'Debe haber por lo menos 1 contacto por empresa'});
+        return next();
+    }
+
+    const contacto = await ClienteContacto.destroy({ where: { clienteEmpresaId: id, id: req.body.id } });
+
+    if(!contacto){
+        res.status(404).json({ msg: 'No existe ese contacto'});
+        return next();
+    }
+
+    res.status(200).json({ msg: 'Contacto empresa ha sido eliminado correctamente'});
+}
+
 export {
     crearClienteContacto,
     obtenerContactosPorEmpresa,
-    actualizarContactoEmpresa
+    actualizarContactoEmpresa,
+    eliminarContactoEmpresa
 }
