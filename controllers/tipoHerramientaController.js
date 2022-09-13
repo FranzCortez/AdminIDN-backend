@@ -34,7 +34,23 @@ const obtenerNombreTodosTipo = async (req, res, next) => {
 
 }
 
+// obtiene toda la informacion de 1 tipo de herramineta
+const obtenerInformacionTipo = async (req, res, next) => {
+
+    const { id } = req.params;
+
+    if(!id){
+        res.status(400).json({msg: `Error al encontrar`});
+        return next();
+    }
+
+    const tipoHerramienta = await TipoHerramienta.findByPk(id);
+
+    res.status(200).json(tipoHerramienta);
+}
+
 export {
     nuevoTipoHerramienta,
-    obtenerNombreTodosTipo
+    obtenerNombreTodosTipo,
+    obtenerInformacionTipo
 }
