@@ -7,7 +7,8 @@ const TipoHerramienta = db.define('tipoherramienta', {
         allowNull: false
     },
     descripcion: {
-        type: DataTypes.TEXT
+        type: DataTypes.TEXT,
+        defaultValue: ''
     }
 }, {
     timestamps: false
