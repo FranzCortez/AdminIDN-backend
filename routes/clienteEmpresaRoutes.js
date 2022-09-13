@@ -10,7 +10,7 @@ router.post('/empresa', nuevoClienteEmpresa);
 router.get('/empresa/:pag', todosClienteEmpresa);
 
 // obtener empresa por id
-router.get('/empresa/:id', encontrarClienteEmpresa);
+router.get('/empresa/editar/:id', encontrarClienteEmpresa);
 
 // actualizar datos de empresa
 router.put('/empresa/:id', actualizarClienteEmpresa);

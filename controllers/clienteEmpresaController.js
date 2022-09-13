@@ -8,7 +8,7 @@ const nuevoClienteEmpresa = async (req, res, next) => {
 
     // TODO: Permisos
 
-    const {nombreEmpresa, razonSocial, rut, direccion } = req.body;
+    const {nombre: nombreEmpresa, razonSocial, rut, direccion } = req.body;
 
     if(!nombreEmpresa || !razonSocial || !rut || !direccion){
         res.status(400).json({msg: 'Todos los campos son necesarios'});
@@ -77,7 +77,7 @@ const actualizarClienteEmpresa = async (req, res, next) => {
         return next();
     }
 
-    const { nombreEmpresa, razonSocial, rut, direccion } = req.body;
+    const { nombre: nombreEmpresa, razonSocial, rut, direccion } = req.body;
     
     if(!nombreEmpresa || !razonSocial || !rut || !direccion){
         res.status(400).json({msg: 'Todos los campos son necesarios'});
