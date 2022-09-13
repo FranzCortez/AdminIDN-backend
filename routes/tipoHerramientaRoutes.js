@@ -1,5 +1,5 @@
 import express from "express";
-import { nuevoTipoHerramienta, obtenerNombreTodosTipo, obtenerInformacionTipo, actualizarTipoHerramienta } from "../controllers/tipoHerramientaController.js";
+import { nuevoTipoHerramienta, obtenerNombreTodosTipo, obtenerInformacionTipo, actualizarTipoHerramienta, eliminarTipoHerramienta } from "../controllers/tipoHerramientaController.js";
 
 const router = express.Router();
 
@@ -14,5 +14,8 @@ router.get('/categoria/herramienta/:id', obtenerInformacionTipo);
 
 // actualiza la informacion de 1 herramienta por id
 router.put('/categoria/herramienta/:id', actualizarTipoHerramienta);
+
+// elimina la herramienta por id
+router.delete('/categoria/herramienta/:id', eliminarTipoHerramienta);
 
 export default router;

@@ -78,9 +78,25 @@ const actualizarTipoHerramienta = async (req, res, next) => {
     res.status(200).json({ msg: `Herraemienta ${nombre} actualizada correctamente`});
 }
 
+// elimina un tipo de herramienta
+const eliminarTipoHerramienta = async (req, res, next) => {
+
+    const { id } = req.params;
+
+    const eliminarHerramienta = await TipoHerramienta.destroy({ where: { id } });
+
+    if(!eliminarHerramienta){
+        res.status(404).json({msg: `No existe herramienta`});
+        return next();
+    }
+    
+    res.status(200).json({ msg: 'Herramienta eliminada correctamente'});
+}
+
 export {
     nuevoTipoHerramienta,
     obtenerNombreTodosTipo,
     obtenerInformacionTipo,
-    actualizarTipoHerramienta
+    actualizarTipoHerramienta,
+    eliminarTipoHerramienta
 }
