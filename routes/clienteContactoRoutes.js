@@ -16,7 +16,7 @@ router.get('/contacto/editar/:idEmpresa/:id', obtenerContactoEspecifico);
 router.put('/contacto/:idEmpresa', actualizarContactoEmpresa);
 
 // eliminar contacto de una empresa
-router.delete('/contacto/:idEmpresa', eliminarContactoEmpresa);
+router.delete('/contacto/:idEmpresa/:id', eliminarContactoEmpresa);
 
 
 export default router;

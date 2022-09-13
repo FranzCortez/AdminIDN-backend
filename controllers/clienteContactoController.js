@@ -69,8 +69,6 @@ const obtenerContactosPorEmpresa = async (req, res, next) => {
 
 const obtenerContactoEspecifico = async (req, res, next) => {
 
-    console.log(req.params)
-
     const { idEmpresa, id } = req.params;
 
     const empresa = await ClienteEmpresa.findByPk(idEmpresa);
@@ -124,23 +122,23 @@ const actualizarContactoEmpresa = async (req, res, next) => {
 // eliminar contacto de 1 empresa
 const eliminarContactoEmpresa = async (req, res, next) => {
 
-    const { idEmpresa: id } = req.params;
+    const { idEmpresa, id } = req.params;
 
-    const empresa = await ClienteEmpresa.findByPk(id);
-
+    const empresa = await ClienteEmpresa.findByPk(idEmpresa);
+    
     if(!empresa){
         res.status(404).json({ msg: 'Empresa no existe'});
         return next();
     }
-
-    const contactosEmpresa = await ClienteContacto.findAll({ where: { clienteEmpresaId: id } });
+    
+    const contactosEmpresa = await ClienteContacto.findAll({ where: { clienteEmpresaId: empresa.id } });
 
     if(contactosEmpresa.length === 1) {
         res.status(400).json({ msg: 'Debe haber por lo menos 1 contacto por empresa'});
         return next();
     }
 
-    const contacto = await ClienteContacto.destroy({ where: { clienteEmpresaId: id, id: req.body.id } });
+    const contacto = await ClienteContacto.destroy({ where: { clienteEmpresaId: empresa.id, id: id } });
 
     if(!contacto){
         res.status(404).json({ msg: 'No existe ese contacto'});
