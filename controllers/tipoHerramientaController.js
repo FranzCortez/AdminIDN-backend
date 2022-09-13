@@ -25,7 +25,16 @@ const nuevoTipoHerramienta = async (req, res, next) => {
     res.status(200).json({ msg: `Herramienta ${nombre} registrada exitosamente`});
 }
 
+// obtiene todos los tipos de herramienta, pero solo el nombre
+const obtenerNombreTodosTipo = async (req, res, next) => {
+
+    const nombresTipo = await TipoHerramienta.scope('soloNombre').findAll({});
+
+    res.status(200).json(nombresTipo);
+
+}
 
 export {
-    nuevoTipoHerramienta
+    nuevoTipoHerramienta,
+    obtenerNombreTodosTipo
 }

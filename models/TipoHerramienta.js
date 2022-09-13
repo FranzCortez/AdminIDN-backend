@@ -11,7 +11,14 @@ const TipoHerramienta = db.define('tipoherramienta', {
         defaultValue: ''
     }
 }, {
-    timestamps: false
+    timestamps: false,
+    scopes: {
+        soloNombre: {
+            attributes: {
+                exclude: ['descripcion']
+            }
+        }
+    }
 })
 
 export default TipoHerramienta;
