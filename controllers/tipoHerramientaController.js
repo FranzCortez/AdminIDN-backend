@@ -49,8 +49,38 @@ const obtenerInformacionTipo = async (req, res, next) => {
     res.status(200).json(tipoHerramienta);
 }
 
+// actualizar datos de 1 tipo de herramienta
+const actualizarTipoHerramienta = async (req, res, next) => {
+
+    const { id } = req.params;
+
+    const tipoHerramienta = await TipoHerramienta.findByPk(id);
+
+    if(!tipoHerramienta){
+        res.status(400).json({msg: `Herramienta no encontrada`});
+        return next();
+    }
+
+    const { nombre, descripcion } = req.body;
+
+    const existeHerramienta = await TipoHerramienta.findOne({ where: { nombre } });
+
+    if(existeHerramienta.id === id){
+        res.status(400).json({msg: `Ya existe una herramienta con el nombre: ${nombre}`});
+        return next();
+    }
+
+    tipoHerramienta.nombre = nombre;
+    tipoHerramienta.descripcion = descripcion;
+
+    await tipoHerramienta.save();
+
+    res.status(200).json({ msg: `Herraemienta ${nombre} actualizada correctamente`});
+}
+
 export {
     nuevoTipoHerramienta,
     obtenerNombreTodosTipo,
-    obtenerInformacionTipo
+    obtenerInformacionTipo,
+    actualizarTipoHerramienta
 }
