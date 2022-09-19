@@ -46,7 +46,7 @@ try {
 }
 
 // Routing
-app.use('/', publicRoutes);
+app.use('/api', publicRoutes);
 app.use('/api/cuentas', usuarioRoutes);
 app.use('/api/empresas', clienteEmpresaRoutes);
 app.use('/api/contactos', clienteContactoRoutes);
