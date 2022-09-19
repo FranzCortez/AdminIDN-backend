@@ -6,7 +6,10 @@ const Op = Sequelize.Op;
 // crea a un usuario nuevo
 const crearUsuario = async (req, res, next) => {
 
-    // TODO: revisar permisos
+    if(res.token.tipo !== 1){
+        res.status(400).json({msg: 'Permiso Denegado'});
+        return next();
+    }
 
     const { nombre, rut, email, tipo, telefono } = req.body;
 
@@ -48,7 +51,11 @@ const crearUsuario = async (req, res, next) => {
 
 // obtener todos los usuarios
 const todosUsuarios = async (req, res, next) => {
-    // TODO: revisar permisos
+    
+    if(res.token.tipo !== 1){
+        res.status(400).json({msg: 'Permiso Denegado'});
+        return next();
+    }
 
     const offset = (parseInt(req.params.pag) || 0) * 10;
 
@@ -62,7 +69,10 @@ const todosUsuarios = async (req, res, next) => {
 // obtener usuario por ID
 const encontrarUsuario = async (req, res, next) => {
 
-    // TODO: revisar permisos
+    if(res.token.tipo !== 1){
+        res.status(400).json({msg: 'Permiso Denegado'});
+        return next();
+    }
 
     const usuario = await Usuario.scope('eliminarPass').findByPk(req.params.id);
 
@@ -77,7 +87,10 @@ const encontrarUsuario = async (req, res, next) => {
 // Edita a un usuario
 const editarUsuario = async (req, res, next) => {
 
-    // TODO: revisar permisos
+    if(res.token.tipo !== 1){
+        res.status(400).json({msg: 'Permiso Denegado'});
+        return next();
+    }
 
     const { nombre, rut, email, tipo, telefono } = req.body; 
 
@@ -119,7 +132,10 @@ const editarUsuario = async (req, res, next) => {
 // eliminar usuario
 const eliminarUsuario = async (req, res, next) => {
 
-    // TODO: revisar permisos
+    if(res.token.tipo !== 1){
+        res.status(400).json({msg: 'Permiso Denegado'});
+        return next();
+    }
 
     const usuario = await Usuario.destroy({ where: {id: req.params.id}});
 
@@ -131,7 +147,13 @@ const eliminarUsuario = async (req, res, next) => {
     res.status(200).json({ msg: 'Usuario Eliminado Correctamente'});
 }
 
+// buscar por nombre algun usuario
 const buscarPorNombre = async (req, res, next) => {
+
+    if(res.token.tipo !== 1){
+        res.status(400).json({msg: 'Permiso Denegado'});
+        return next();
+    }
 
     const nombreBuscar = req.params.nombre;
 
