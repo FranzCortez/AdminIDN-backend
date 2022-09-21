@@ -7,6 +7,7 @@ import usuarioRoutes from "./routes/usuarioRoutes.js";
 import clienteEmpresaRoutes from "./routes/clienteEmpresaRoutes.js";
 import clienteContactoRoutes from "./routes/clienteContactoRoutes.js";
 import TipoHerramienta from "./routes/TipoHerramientaRoutes.js";
+import ingresoHerramienta from "./routes/ingresoHerramientaRoutes.js";
 import db from "./config/db.js";
 
 //App
@@ -51,6 +52,7 @@ app.use('/api/cuentas', usuarioRoutes);
 app.use('/api/empresas', clienteEmpresaRoutes);
 app.use('/api/contactos', clienteContactoRoutes);
 app.use('/api/tipo', TipoHerramienta);
+app.use('/api/ih', ingresoHerramienta);
 
 // Puerto
 const port = process.env.PORT || 5000;

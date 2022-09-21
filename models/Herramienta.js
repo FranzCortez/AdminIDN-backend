@@ -25,7 +25,6 @@ const Herramienta = db.define('herramienta', {
     fecha: {
         type: DataTypes.DATE,
         allowNull: false,
-        defaultValue: Date.now()
     },
     comentario: {
         type: DataTypes.TEXT,
@@ -49,6 +48,11 @@ const Herramienta = db.define('herramienta', {
     },
     fechaGuiaDespacho: {
         type: DataTypes.DATE
+    },
+    activo: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: false
     }
 }, {
     timestamps: false,
