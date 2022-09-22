@@ -23,7 +23,7 @@ const Herramienta = db.define('herramienta', {
         allowNull: false
     },
     fecha: {
-        type: DataTypes.DATE,
+        type: DataTypes.DATEONLY,
         allowNull: false,
     },
     comentario: {
@@ -34,7 +34,11 @@ const Herramienta = db.define('herramienta', {
         type: DataTypes.STRING,
         allowNull: false
     },
-    numeroIntero: {
+    numeroSerie: {
+        type: DataTypes.STRING,
+        defaultValue: '-'
+    },
+    numeroInterno: {
         type: DataTypes.STRING,
         defaultValue: '-'
     },
@@ -47,12 +51,12 @@ const Herramienta = db.define('herramienta', {
         defaultValue: '-'
     },
     fechaGuiaDespacho: {
-        type: DataTypes.DATE
+        type: DataTypes.DATEONLY
     },
     activo: {
         type: DataTypes.BOOLEAN,
         allowNull: false,
-        defaultValue: false
+        defaultValue: true
     }
 }, {
     timestamps: false,

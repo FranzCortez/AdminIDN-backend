@@ -1,7 +1,7 @@
 import { DataTypes } from "sequelize";
 import db from "../config/db.js";
 
-const TipoHerramienta = db.define('tipoherramienta', {
+const TipoHerramienta = db.define('tipoHerramienta', {
     nombre: {
         type: DataTypes.STRING,
         allowNull: false
