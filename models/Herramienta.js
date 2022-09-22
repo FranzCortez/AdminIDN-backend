@@ -61,14 +61,9 @@ const Herramienta = db.define('herramienta', {
 }, {
     timestamps: false,
     scopes: {
-        herramienta: {
+        filtro: {
             attributes: {
-                exclude: ['fecha', 'numeroInterno', 'numeroGuiaCliente', 'guiaDespacho', 'fechaGuiaDespacho']
-            }
-        },
-        ingreso: {
-            attributes: {
-                exclude: ['nombre', 'marca', 'modelo', 'descripcion', 'comentario']
+                exclude: ['descripcion', 'comentario', 'numeroGuiaCliente', 'guiaDespacho', 'fechaGuiaDespacho']
             }
         }
     }

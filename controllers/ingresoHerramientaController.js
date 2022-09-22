@@ -1,12 +1,11 @@
 import Herramienta from "../models/Herramienta.js";
 import ClienteContacto from "../models/ClienteContacto.js";
-import TipoHerramienta from "../models/TipoHerramienta.js";
 import Sequelize from "sequelize";
 const Op = Sequelize.Op;
 
 // crea un nuevo ingreso y herramienta
 const nuevoIngresoHerramienta = async (req, res, next) => {
-    console.log("entre")
+    
     const { otin, descripcion, nombre, marca, comentario, modelo, numeroInterno, numeroGuiaCliente, guiaDespacho, fechaGuiaDespacho, tipoHerramientaId, clienteContactoId, fecha, numeroSerie } = req.body;
 
     if( !otin, !descripcion, !nombre, !marca, !modelo ) {
@@ -107,16 +106,38 @@ const ingresosFiltroTodos = async (req, res, next) => {
         });
     }
 
-    const herramientas = await Herramienta.findAll({ 
+    const herramientas = await Herramienta.scope('filtro').findAll({ 
         where,
-        include
+        include,
+        order: [['activo', 'DESC']]
     });
 
     return res.status(200).json(herramientas);
 
 }
 
+// obtiene toda la info de 1 ingreso
+const ingresoInfo = async ( req, res, next ) => {
+
+    const { id } = req.params;
+
+    if(!id) {
+        res.status(404).json({ msg: 'Faltan parametros' });
+        return next();
+    }
+
+    const ingreso = await Herramienta.findByPk( id );
+
+    if(!ingreso){
+        res.status(404).json({ msg: 'No existe'});
+        return next();
+    }
+
+    return res.status(200).json(ingreso);
+}
+
 export {
     nuevoIngresoHerramienta,
-    ingresosFiltroTodos
+    ingresosFiltroTodos,
+    ingresoInfo
 }
