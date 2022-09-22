@@ -1,5 +1,6 @@
 import Herramienta from "../models/Herramienta.js";
 import ClienteContacto from "../models/ClienteContacto.js";
+import ClienteEmpresa from "../models/ClienteEmpresa.js";
 import Sequelize from "sequelize";
 const Op = Sequelize.Op;
 
@@ -60,67 +61,83 @@ const nuevoIngresoHerramienta = async (req, res, next) => {
 // obtener todos los ingresos ordenados segun del mas nuevo al mas antiguo y por si estana activos o no
 // filtro por otin(text), nombre(text), marca(text), modelo(text), numero interno(text), fecha ingreso(selected), nombre cliente(selected), numero serie(text), tipo herramienta(selected)
 const ingresosFiltroTodos = async (req, res, next) => {
-
+    
     const { fecha, otin, nombre, marca, modelo, numeroInterno, numeroSerie, empresaId, tipoHerramientaId } = req.body;
 
     let where = {}
     let include = [];
 
-    if( fecha !== '' ) {
+    if( fecha !== '' && fecha ) {
         where.fecha = {
             [Op.eq] : fecha
         }
     }
     
-    if( otin !== '') {
+    if( otin !== '' && otin ) {
         where.otin = {
             [Op.eq] : otin
         }
     }
 
-    if( nombre !== '' ) {
+    if( nombre !== '' && nombre ) {
         where.nombre = {
             [Op.like] : '%' + nombre + '%'
         }
     }
 
-    if( numeroSerie !== '' ) {
+    if( numeroSerie !== '' && numeroSerie ) {
         where.numeroSerie = {
             [Op.like] : '%' + numeroSerie + '%'
         }
     }
 
-    if( marca !== '' ) {
+    if( marca !== '' && marca ) {
         where.marca = {
             [Op.like] : '%' + marca + '%'
         }
     }
 
-    if( modelo !== '' ) {
+    if( modelo !== '' && modelo ) {
         where.modelo = {
             [Op.like] : '%' + modelo + '%'
         }
     }
 
-    if( tipoHerramientaId !== '' ) {
+    if( tipoHerramientaId !== '' && tipoHerramientaId ) {
         where.tipoHerramientumId = {
             [Op.eq] : tipoHerramientaId
         }
     }
 
-    if( numeroInterno !== '' ) {
+    if( numeroInterno !== '' && numeroInterno ) {
         where.numeroInterno = {
             [Op.eq] : numeroInterno
         }
     }
 
-    if( empresaId !== '' ) {
+    if( empresaId !== '' && empresaId ) {
         include.push({
             model: ClienteContacto,
             where: {
                 clienteEmpresaId: empresaId
+            },
+            attributes: ['nombre'],
+            include: {
+                model: ClienteEmpresa,
+                attributes: ['id', 'nombre']
             }
         });
+    } else {
+        include.push(
+            {
+                model: ClienteContacto,
+                attributes: ['nombre'],
+                include: {
+                    model: ClienteEmpresa,
+                    attributes: ['id', 'nombre']
+                }
+            }
+        );
     }
 
     const herramientas = await Herramienta.scope('filtro').findAll({ 
