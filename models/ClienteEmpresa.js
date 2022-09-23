@@ -19,7 +19,14 @@ const ClienteEmpresa = db.define('clienteEmpresa',{
         allowNull: false
     },
 }, {
-    timestamps: false
+    timestamps: false,
+    scopes: {
+        nombre: {
+            attributes: {
+                exclude: ['rut', 'razonSocial', 'direccion']
+            }
+        }
+    }
 });
 
 export default ClienteEmpresa;
