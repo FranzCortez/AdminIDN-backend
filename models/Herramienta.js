@@ -9,11 +9,6 @@ const Herramienta = db.define('herramienta', {
         type: DataTypes.STRING,
         allowNull: false
     },
-    descripcion: {
-        type: DataTypes.TEXT,
-        allowNull: false,
-        defaultValue: '-'
-    },
     nombre: {
         type: DataTypes.STRING,
         allowNull: false
@@ -75,7 +70,7 @@ const Herramienta = db.define('herramienta', {
 });
 
 Herramienta.belongsTo(Factura);
-Herramienta.belongsTo(TipoHerramienta);
+Herramienta.belongsTo(TipoHerramienta, {foreignKey: 'tipoHerramientaId'});
 Herramienta.belongsTo(ClienteContacto);
 
 export default Herramienta;

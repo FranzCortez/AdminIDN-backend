@@ -1,15 +1,16 @@
 import Herramienta from "../models/Herramienta.js";
 import ClienteContacto from "../models/ClienteContacto.js";
 import ClienteEmpresa from "../models/ClienteEmpresa.js";
+import TipoHerramienta from "../models/TipoHerramienta.js";
 import Sequelize from "sequelize";
 const Op = Sequelize.Op;
 
 // crea un nuevo ingreso y herramienta
 const nuevoIngresoHerramienta = async (req, res, next) => {
     
-    const { descripcion, nombre, marca, comentario, modelo, numeroInterno, numeroGuiaCliente, guiaDespacho, fechaGuiaDespacho, tipoHerramientaId, clienteContactoId, fecha, numeroSerie } = req.body;
+    const { nombre, marca, comentario, modelo, numeroInterno, numeroGuiaCliente, guiaDespacho, fechaGuiaDespacho, tipoHerramientaId, clienteContactoId, fecha, numeroSerie } = req.body;
 
-    if( !descripcion, !nombre, !marca, !modelo ) {
+    if( !nombre, !marca, !modelo ) {
         res.status(400).json({ msg: 'Todos los campos son necesarios'});
         return next();
     }
@@ -34,7 +35,6 @@ const nuevoIngresoHerramienta = async (req, res, next) => {
 
         await Herramienta.create({
             otin,
-            descripcion,
             nombre,
             marca,
             comentario,
@@ -45,7 +45,7 @@ const nuevoIngresoHerramienta = async (req, res, next) => {
             numeroSerie,
             guiaDespacho,
             fechaGuiaDespacho, 
-            tipoHerramientumId: tipoHerramientaId, 
+            tipoHerramientaId, 
             clienteContactoId
         });
     
@@ -160,7 +160,25 @@ const ingresoInfo = async ( req, res, next ) => {
         return next();
     }
 
-    const ingreso = await Herramienta.findByPk( id );
+    const ingreso = await Herramienta.findOne( { 
+        where:  { id }, 
+        include: [
+            {
+                model: ClienteContacto,
+                attributes: ['nombre', 'correo', 'telefono'],
+                include: [
+                    {
+                        model: ClienteEmpresa,
+                        attributes: ['id', 'nombre']
+                    }
+                ]
+            },
+            {
+                model: TipoHerramienta,
+                attributes: ['id', 'nombre']
+            }
+        ]
+    });
 
     if(!ingreso){
         res.status(404).json({ msg: 'No existe'});
