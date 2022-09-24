@@ -8,7 +8,7 @@ const Op = Sequelize.Op;
 // crea un nuevo ingreso y herramienta
 const nuevoIngresoHerramienta = async (req, res, next) => {
     
-    const { nombre, marca, comentario, modelo, numeroInterno, numeroGuiaCliente, guiaDespacho, fechaGuiaDespacho, tipoHerramientaId, clienteContactoId, fecha, numeroSerie } = req.body;
+    const { nombre, marca, comentario, modelo, numeroInterno, numeroGuiaCliente, tipoHerramientaId, clienteContactoId, fecha, numeroSerie } = req.body;
 
     if( !nombre, !marca, !modelo ) {
         res.status(400).json({ msg: 'Todos los campos son necesarios'});
@@ -43,8 +43,6 @@ const nuevoIngresoHerramienta = async (req, res, next) => {
             numeroInterno,
             numeroGuiaCliente,
             numeroSerie,
-            guiaDespacho,
-            fechaGuiaDespacho, 
             tipoHerramientaId, 
             clienteContactoId
         });
