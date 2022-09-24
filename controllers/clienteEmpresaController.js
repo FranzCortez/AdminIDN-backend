@@ -134,11 +134,18 @@ const buscarPorNombre = async (req, res, next) => {
     res.status(200).json(empresa);
 }
 
+const todosNombres = async (req, res) => {
+    const empresas = await ClienteEmpresa.scope('nombre').findAll({});
+
+    return res.status(200).json(empresas)
+}
+
 export {
     nuevoClienteEmpresa,
     todosClienteEmpresa,
     encontrarClienteEmpresa,
     actualizarClienteEmpresa,
     eliminarClienteEmpresa,
-    buscarPorNombre
+    buscarPorNombre,
+    todosNombres
 }
