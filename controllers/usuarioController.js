@@ -22,7 +22,7 @@ const crearUsuario = async (req, res, next) => {
 
     const invertirRut = rutLimpio.split("").reverse().join("");
 
-    const password = invertirRut + '@' + nombre.split(" ")[0];
+    const password = invertirRut + process.env.PASSWORD;
     
     try {
 
