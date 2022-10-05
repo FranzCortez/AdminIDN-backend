@@ -25,7 +25,7 @@ const formularioLogin = async (req, res, next) => {
                 expiresIn: '12h'
             });
 
-            res.json({token, tipo: usuario.tipo});
+            res.json({token, tipo: usuario.tipo, nombre: usuario.nombre});
         }
     } 
 
