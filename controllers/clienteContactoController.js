@@ -148,10 +148,21 @@ const eliminarContactoEmpresa = async (req, res, next) => {
     res.status(200).json({ msg: 'Contacto empresa ha sido eliminado correctamente'});
 }
 
+// obtiene toda la info de 1 contacto por id
+const contactoInfo = async (req, res, next) => {
+
+    const { id } = req.params;
+
+    const contacto = await ClienteContacto.findByPk(id);
+
+    return res.status(200).json(contacto);
+}
+
 export {
     crearClienteContacto,
     obtenerContactosPorEmpresa,
     obtenerContactoEspecifico,
     actualizarContactoEmpresa,
-    eliminarContactoEmpresa
+    eliminarContactoEmpresa,
+    contactoInfo
 }
