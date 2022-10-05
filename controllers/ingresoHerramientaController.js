@@ -203,21 +203,18 @@ const editarInfo = async ( req, res, next ) => {
         return next();
     }
 
-    const { descripcion, nombre, marca, comentario, modelo, numeroInterno, numeroGuiaCliente, guiaDespacho, fechaGuiaDespacho, tipoHerramientaId, clienteContactoId, fecha, numeroSerie } = req.body;
+    const { comentario, nombre, marca, modelo, numeroInterno, numeroGuiaCliente, tipoHerramientaId, clienteContactoId, fecha, numeroSerie } = req.body;
 
-    ingreso.descripcion = descripcion;
+    ingreso.comentario = comentario;
     ingreso.nombre = nombre;
     ingreso.marca = marca;
-    ingreso.comentario = comentario;
+    ingreso.fecha = fecha;
     ingreso.modelo = modelo;
+    ingreso.numeroSerie = numeroSerie;
     ingreso.numeroInterno = numeroInterno;
     ingreso.numeroGuiaCliente = numeroGuiaCliente;
-    ingreso.guiaDespacho = guiaDespacho;
-    ingreso.fechaGuiaDespacho = fechaGuiaDespacho;
     ingreso.tipoHerramientaId = tipoHerramientaId;
     ingreso.clienteContactoId = clienteContactoId;
-    ingreso.fecha = fecha;
-    ingreso.numeroSerie = numeroSerie;
 
     await ingreso.save();
 
