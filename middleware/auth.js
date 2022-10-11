@@ -2,7 +2,7 @@ import jwt from "jsonwebtoken";
 
 const auth = (req, res, next) => {
 
-    const authHeader = req.get('Authorization');
+    const authHeader = req.get('Authorization') || req.body?.headers?.Authorization ;
 
     if(!authHeader) {
         const error = new Error('No autenticado');
