@@ -34,6 +34,18 @@ const obtenerNombreTodosTipo = async (req, res, next) => {
 
 }
 
+// obtiene toda la info de todos los tipos
+const obtenerInfo = async (req, res, next) => {
+    
+    const tiposHerramienta = await TipoHerramienta.findAll({});
+    
+    if(!tiposHerramienta){
+        return res.status(404).json({msg: "No existen tipos de herramientas en el sistema"});
+    }
+
+    return res.status(200).json(tiposHerramienta);
+} 
+
 // obtiene toda la informacion de 1 tipo de herramineta
 const obtenerInformacionTipo = async (req, res, next) => {
 
@@ -65,9 +77,11 @@ const actualizarTipoHerramienta = async (req, res, next) => {
 
     const existeHerramienta = await TipoHerramienta.findOne({ where: { nombre } });
 
-    if(existeHerramienta.id === id){
-        res.status(400).json({msg: `Ya existe una herramienta con el nombre: ${nombre}`});
-        return next();
+    if(existeHerramienta){
+        if(existeHerramienta.id != id){
+            res.status(400).json({msg: `Ya existe una herramienta con el nombre: ${nombre}`});
+            return next();
+        }
     }
 
     tipoHerramienta.nombre = nombre;
@@ -96,6 +110,7 @@ const eliminarTipoHerramienta = async (req, res, next) => {
 export {
     nuevoTipoHerramienta,
     obtenerNombreTodosTipo,
+    obtenerInfo,
     obtenerInformacionTipo,
     actualizarTipoHerramienta,
     eliminarTipoHerramienta
