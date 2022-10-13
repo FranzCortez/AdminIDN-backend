@@ -1,4 +1,6 @@
 import TipoHerramienta from "../models/TipoHerramienta.js";
+import Sequelize from "sequelize"
+const Op = Sequelize.Op;
 
 // agrega una nueva herramienta pero revisa que este nombre no este registrado ya en el sistema
 const nuevoTipoHerramienta = async (req, res, next) => {
@@ -107,11 +109,32 @@ const eliminarTipoHerramienta = async (req, res, next) => {
     res.status(200).json({ msg: 'Herramienta eliminada correctamente'});
 }
 
+// busca por nombre de la herramienta
+const buscarPorNombre = async (req, res, next) => {
+
+    const nombreBuscar = req.params.nombre;
+
+    if(nombreBuscar.length < 3) {
+        res.status(404).json({ msg: 'Mínimo debe tener 3 letras para poder buscar'});
+        return next();
+    }
+
+    const herramientas = await TipoHerramienta.findAll( { where: {nombre : { [Op.like] : '%'+ nombreBuscar +'%'} }});
+
+    if(!herramientas) {
+        res.status(404).json({ msg: 'No existe ningún tipo de herramienta con ese nombre'});
+        return next();
+    }
+
+    res.status(200).json(herramientas);
+}
+
 export {
     nuevoTipoHerramienta,
     obtenerNombreTodosTipo,
     obtenerInfo,
     obtenerInformacionTipo,
     actualizarTipoHerramienta,
-    eliminarTipoHerramienta
+    eliminarTipoHerramienta,
+    buscarPorNombre
 }
