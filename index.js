@@ -1,12 +1,13 @@
 import express from "express";
 import bodyParser from "body-parser";
 import cors from "cors";
+import mysql, { createConnection, createPool } from "mysql";
 
 import publicRoutes from "./routes/publicRoutes.js";
 import usuarioRoutes from "./routes/usuarioRoutes.js";
 import clienteEmpresaRoutes from "./routes/clienteEmpresaRoutes.js";
 import clienteContactoRoutes from "./routes/clienteContactoRoutes.js";
-import TipoHerramienta from "./routes/TipoHerramientaRoutes.js";
+import TipoHerramienta from "./routes/tipoHerramientaRoutes.js";
 import ingresoHerramienta from "./routes/ingresoHerramientaRoutes.js";
 import db from "./config/db.js";
 
@@ -31,7 +32,7 @@ const corsOptions = {
         if( existe) {
             cb(null, true);
         } else {
-            cb(new Error('No permitido por CORS'));
+            cb(new Error('ERROR'));
         }
     }
 }
@@ -43,7 +44,7 @@ try {
     db.sync();
     console.log("Conexion a la base de datos");
 } catch (error) {
-    console.log(error);
+    console.error(error);
 }
 
 // Routing
@@ -56,8 +57,8 @@ app.use('/api/ih', ingresoHerramienta);
 
 // Puerto
 const port = process.env.PORT || 5000;
-const host = process.env.HOST || '0.0.0.0';
+const host = process.env.HOST || '127.0.0.1';
 
 app.listen( port, host, () => {
-    console.log(`Server corriendo en el puerto ${port}`);
+    console.log(`Server corriendo en http://${host}:${port}/`);
 });
