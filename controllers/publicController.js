@@ -8,7 +8,7 @@ const formularioLogin = async (req, res, next) => {
     const usuario = await Usuario.findOne({ where: { email } });
 
     if(!usuario) {
-        await res.status(401).json({mensaje: 'Ese usaurio no existe'});
+        await res.status(401).json({mensaje: 'Ese usuario no existe'});
         return next();
     } else {
         
