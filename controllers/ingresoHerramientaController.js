@@ -60,7 +60,7 @@ const nuevoIngresoHerramienta = async (req, res, next) => {
 // filtro por otin(text), nombre(text), marca(text), modelo(text), numero interno(text), fecha ingreso(selected), nombre cliente(selected), numero serie(text), tipo herramienta(selected)
 const ingresosFiltroTodos = async (req, res, next) => {
     
-    const { fecha, otin, nombre, marca, modelo, numeroInterno, numeroSerie, empresaId, tipoHerramientaId } = req.body;
+    const { fecha, otin, nombre, marca, modelo, numeroInterno, numeroSerie, empresaId, tipoHerramientaId, activo } = req.body;
 
     let where = {}
     let include = [];
@@ -100,8 +100,8 @@ const ingresosFiltroTodos = async (req, res, next) => {
             [Op.like] : '%' + modelo + '%'
         }
     }
-
-    if( tipoHerramientaId !== '' && tipoHerramientaId ) {
+ 
+    if( tipoHerramientaId !== '' && tipoHerramientaId && tipoHerramientaId !== '0' ) {
         where.tipoHerramientumId = {
             [Op.eq] : tipoHerramientaId
         }
@@ -113,7 +113,7 @@ const ingresosFiltroTodos = async (req, res, next) => {
         }
     }
 
-    if( empresaId !== '' && empresaId ) {
+    if( empresaId !== '' && empresaId && empresaId !== '0' ) {
         include.push({
             model: ClienteContacto,
             where: {
@@ -136,6 +136,12 @@ const ingresosFiltroTodos = async (req, res, next) => {
                 }
             }
         );
+    }
+
+    if( activo !== '' && activo && activo !== '0' ){
+        where.activo = {
+            [Op.eq] : activo
+        }
     }
 
     const herramientas = await Herramienta.scope('filtro').findAll({ 
