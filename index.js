@@ -22,7 +22,7 @@ app.use( bodyParser.urlencoded({ extended: true }));
 app.use( bodyParser.json());
 
 // Habilitar cors
-const whitelist = [process.env.FRONTEND_URL];
+const whitelist = [process.env.FRONTEND_URL, process.env.FRONTEND_URL2];
 const corsOptions = {
     origin: (origin, cb) => {
         //console.log(origin);
