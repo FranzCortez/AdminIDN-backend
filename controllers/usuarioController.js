@@ -98,8 +98,8 @@ const editarUsuario = async (req, res, next) => {
         res.status(400).json({msg: 'Permiso Denegado'});
         return next();
     }
-
-    const { nombre, rut, email, tipo, telefono } = req.body; 
+    
+    const { nombre, rut, email, tipo, telefono, clienteEmpresaId } = req.body; 
 
     if(!nombre || !rut || !email || !tipo || tipo < 0 || tipo > 3){
         res.status(501).json({msg: 'Todos los campos son necesarios'});
@@ -115,21 +115,22 @@ const editarUsuario = async (req, res, next) => {
 
     const rutLimpio = rut.split(".").join("").split("-").join("");
 
-    if(usuario.nombre != nombre || usuario.rut != rut){
+    if(usuario.rut != rut){
 
         const invertirRut = rutLimpio.split("").reverse().join("");
 
-        const password = invertirRut + '@' + nombre.split(" ")[0];
+        const password = invertirRut + process.env.PASSWORD;
 
         const salt = await bcrypt.genSalt(12);
         usuario.password = await bcrypt.hash( password, salt );
     }
 
     usuario.nombre = nombre;
-    usuario.rut = parseInt(rutLimpio);
+    usuario.rut = rutLimpio;
     usuario.email = email;
     usuario.tipo = tipo;
     usuario.telefono = telefono;
+    usuario.clienteEmpresaId = clienteEmpresaId;
 
     await usuario.save();
 
