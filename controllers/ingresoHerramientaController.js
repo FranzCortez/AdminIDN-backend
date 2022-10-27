@@ -73,7 +73,7 @@ const ingresosFiltroTodos = async (req, res, next) => {
     
     if( otin !== '' && otin ) {
         where.otin = {
-            [Op.eq] : otin
+            [Op.like] : '%' + otin + '%'
         }
     }
 

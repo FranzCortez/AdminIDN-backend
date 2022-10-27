@@ -1,7 +1,6 @@
 import express from "express";
 import bodyParser from "body-parser";
 import cors from "cors";
-import mysql, { createConnection, createPool } from "mysql";
 
 import publicRoutes from "./routes/publicRoutes.js";
 import usuarioRoutes from "./routes/usuarioRoutes.js";
