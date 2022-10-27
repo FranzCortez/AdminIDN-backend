@@ -10,7 +10,7 @@ const crearUsuario = async (req, res, next) => {
         res.status(400).json({msg: 'Permiso Denegado'});
         return next();
     }
-
+    
     const { nombre, rut, email, tipo, telefono } = req.body;
 
     if(!nombre || !rut || !email || !tipo || tipo < 0 || tipo > 3){
@@ -26,20 +26,27 @@ const crearUsuario = async (req, res, next) => {
     
     try {
 
+        let clienteEmpresaId = null;
+
+        if(tipo == 3) {
+            clienteEmpresaId = req.body.clienteEmpresaId;
+        }
+
         const validarUsuario = await Usuario.findOne({ where: {rut : rutLimpio} });
 
         if(validarUsuario){
             res.status(501).json({msg: 'Ese usuario ya existe en el sistema'});
             return next();
         }
-
+        
         await Usuario.create({
             nombre,
             rut: rutLimpio,
             password,
             telefono,
             email,
-            tipo
+            tipo,
+            clienteEmpresaId
         });
 
         res.status(200).json({ msg: `Usuario ${nombre} creado correctamente!`});
