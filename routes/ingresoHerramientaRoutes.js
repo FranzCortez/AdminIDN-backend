@@ -1,5 +1,5 @@
 import express from "express";
-import { nuevoIngresoHerramienta, ingresosFiltroTodos, ingresoInfo, editarInfo, subirArchivo } from "../controllers/ingresoHerramientaController.js";
+import { nuevoIngresoHerramienta, ingresosFiltroTodos, ingresoInfo, editarInfo, subirArchivo, cotizacion } from "../controllers/ingresoHerramientaController.js";
 import { auth } from "../middleware/auth.js";
 
 const router = express.Router();
@@ -17,6 +17,6 @@ router.get('/ingreso/:id',auth , ingresoInfo);
 router.put('/ingreso/:id',auth , editarInfo);
 
 // subir archivo
-router.post('/ingreso/pdf' , subirArchivo);
+router.post('/ingreso/pdf', auth, subirArchivo, cotizacion);
 
 export default router;
