@@ -3,7 +3,47 @@ import ClienteContacto from "../models/ClienteContacto.js";
 import ClienteEmpresa from "../models/ClienteEmpresa.js";
 import TipoHerramienta from "../models/TipoHerramienta.js";
 import Sequelize from "sequelize";
+import multer from "multer";
+import fs from "fs";
 const Op = Sequelize.Op;
+
+// CONFIGURACIÓN MULTER PDF
+const fileFilter = {
+    fileFilter(req, file, cb) {
+        if (file.mimetype === 'application/pdf') {
+            cb(null, true);
+        } else {
+            cb(new Error('Formato no válido'))
+        }
+    }
+}
+const Storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        let dir = `public/${file.originalname.split(" ")[1].split(".")[0]}`;
+        if (!fs.existsSync(dir)) {         
+            fs.mkdirSync(dir);
+        }
+        cb(null, dir);
+    },
+    filename: function (req, file, cb) {
+        cb(null, file.originalname);
+    }
+});
+
+// Pasar la configiguración y el campo
+const upload = multer({ storage: Storage, fileFilter: fileFilter.fileFilter}).array('document');
+
+// Sube un archivo
+const subirArchivo = async (req, res, next) => {
+    await upload(req, res, function (error) {
+        if (error) {
+            return res.json({ mensaje: error })
+        }
+        return next();
+    })
+}
+
+// ----------------------------
 
 // crea un nuevo ingreso y herramienta
 const nuevoIngresoHerramienta = async (req, res, next) => {
@@ -45,6 +85,13 @@ const nuevoIngresoHerramienta = async (req, res, next) => {
             numeroSerie,
             tipoHerramientaId, 
             clienteContactoId
+        });
+
+        const dir = `./public/${otin}`
+        fs.mkdir(dir, (err) => {
+            if (err) {
+                throw err;
+            }
         });
     
         return res.status(200).json({ msg: `Ingreso y herramienta: ${nombre} creada correctamente con otin: ${otin}` });
@@ -173,7 +220,7 @@ const ingresoInfo = async ( req, res, next ) => {
                 include: [
                     {
                         model: ClienteEmpresa,
-                        attributes: ['id', 'nombre']
+                        attributes: ['id', 'nombre', 'direccion', 'rut']
                     }
                 ]
             },
@@ -231,5 +278,6 @@ export {
     nuevoIngresoHerramienta,
     ingresosFiltroTodos,
     ingresoInfo,
-    editarInfo
+    editarInfo,
+    subirArchivo
 }
