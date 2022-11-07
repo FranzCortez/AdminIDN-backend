@@ -280,7 +280,7 @@ const cotizacion = async (req, res, next) => {
 
     const data = JSON.parse(req.body.data);
 
-    const { contenido, fechaEvaluacion, fechaCotizacion, condiciones, plazoEntrega, garantia, descuento, subtotal, neto, iva, total, otin, clienteContactoId } = data;
+    const { contenido, fechaEvaluacion, fechaCotizacion, condiciones, plazoEntrega, garantia, descuento, subtotal, neto, iva, total, otin, clienteContactoId, herramientumId } = data;
 
     if( !otin || !clienteContactoId ) {
         return res.status(404).json({ msg: "Faltan campos importantes" });
@@ -301,6 +301,7 @@ const cotizacion = async (req, res, next) => {
             subtotal,
             neto,
             iva, 
+            herramientumId,
             total,
             otin,
             clienteContactoId,
@@ -315,11 +316,27 @@ const cotizacion = async (req, res, next) => {
     }
 }
 
+// Obtener ruta del archivo
+const obtenerArchivo = async (req, res, next) => {
+
+    const { id } = req.params;
+    
+    if( !id ) {
+        res.status(404).json({ msg: 'Faltan parametros' });
+        return next();
+    }
+    
+    const ruta = await Cotizacion.scope('archivo').findOne({ where: { herramientumId: id } });
+
+    return res.status(200).json(ruta);
+}
+
 export {
     nuevoIngresoHerramienta,
     ingresosFiltroTodos,
     ingresoInfo,
     editarInfo,
     subirArchivo,
-    cotizacion
+    cotizacion,
+    obtenerArchivo
 }
