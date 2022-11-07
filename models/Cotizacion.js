@@ -37,6 +37,10 @@ const Cotizacion = db.define('cotizacion', {
         type: DataTypes.DATEONLY,
         allowNull: true
     },
+    fechaCotizacion: {
+        type: DataTypes.DATEONLY,
+        allowNull: true
+    },
     contenido: {
         type: DataTypes.JSON,
         allowNull: true
@@ -53,8 +57,19 @@ const Cotizacion = db.define('cotizacion', {
         type: DataTypes.STRING,
         allowNull: true
     },
+    otin: {
+        type: DataTypes.STRING,
+        allowNull: false
+    }
 }, {
-    timestamps: false
+    timestamps: false,
+    scopes: {
+        archivo: {
+            attributes: {
+                exclude: ['descuento', 'total', 'iva', 'neto', 'subtotal', 'fechaEvaluacion', 'fechaCotizacion', 'condiciones', 'plazoEntrega', 'garantia', 'otin']
+            }
+        }
+    }
 });
 
 Cotizacion.belongsTo(Herramienta);
