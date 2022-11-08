@@ -88,7 +88,22 @@ const nuevoArchivoFoto = async (req, res, next) => {
     }
 }
 
+// obtiene todas las rutas por id
+const obtenerFoto = async (req, res) => {
+
+    const { id } = req.params;
+
+    const rutas = await FotoGaleria.findOne({ where: { herramientumId: id } });
+
+    if(rutas) {
+        return res.status(200).json({ rutas: JSON.parse(rutas.archivos)[0] });
+    }
+
+    return res.status(200).json({ msg: "no hay imagenes"});
+}
+
 export {
     subirFoto,
-    nuevoArchivoFoto
+    nuevoArchivoFoto,
+    obtenerFoto
 }
