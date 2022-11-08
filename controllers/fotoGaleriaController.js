@@ -92,7 +92,7 @@ const nuevoArchivoFoto = async (req, res, next) => {
 const obtenerFoto = async (req, res) => {
 
     const { id } = req.params;
-
+ 
     const rutas = await FotoGaleria.findOne({ where: { herramientumId: id } });
 
     if(rutas) {
@@ -102,8 +102,38 @@ const obtenerFoto = async (req, res) => {
     return res.status(200).json({ msg: "no hay imagenes"});
 }
 
+// elimina las fotos que se seleccionan
+const eliminarFotos = async (req, res) => {
+
+    const { id } = req.params;
+
+    const { eliminar } = req.body;
+
+    const rutas = await FotoGaleria.findOne({ where: { herramientumId: id } });
+
+    const archivos = JSON.parse(rutas.archivos)[0];
+
+    let final = archivos;
+
+    eliminar.forEach( ruta => {
+        final = final.filter(foto => foto !== ruta);
+
+        fs.unlink('public' + ruta, function (err) {
+            if (err) throw err;
+            console.log('File deleted');
+        });
+    });
+
+    rutas.archivos = { "0": final }
+
+    await rutas.save();
+
+    return res.status(200).json({ msg: "Fotos eliminadas correctamente"})
+}
+
 export {
     subirFoto,
     nuevoArchivoFoto,
-    obtenerFoto
+    obtenerFoto,
+    eliminarFotos
 }

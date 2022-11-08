@@ -1,6 +1,6 @@
 import express from "express";
 import { nuevoIngresoHerramienta, ingresosFiltroTodos, ingresoInfo, editarInfo, subirArchivo, cotizacion, obtenerArchivo } from "../controllers/ingresoHerramientaController.js";
-import { subirFoto, nuevoArchivoFoto, obtenerFoto } from "../controllers/fotoGaleriaController.js";
+import { subirFoto, nuevoArchivoFoto, obtenerFoto, eliminarFotos } from "../controllers/fotoGaleriaController.js";
 import { auth } from "../middleware/auth.js";
 
 const router = express.Router();
@@ -28,5 +28,8 @@ router.post('/ingreso/foto/:id', auth, subirFoto, nuevoArchivoFoto);
 
 // obtener las rutas de las imagenes
 router.get('/ingreso/foto/:id', auth, obtenerFoto);
+
+// eliminar fotos
+router.post('/ingreso/foto/eliminar/:id', auth, eliminarFotos);
 
 export default router;
