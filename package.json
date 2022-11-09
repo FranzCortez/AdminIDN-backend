@@ -1,6 +1,6 @@
 {
   "name": "backend-idn",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "sistema de adminstración para empresa \"Impacto del Norte\"",
   "main": "index.js",
   "type": "module",

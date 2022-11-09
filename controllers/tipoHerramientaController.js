@@ -91,7 +91,7 @@ const actualizarTipoHerramienta = async (req, res, next) => {
 
     await tipoHerramienta.save();
 
-    res.status(200).json({ msg: `Herraemienta ${nombre} actualizada correctamente`});
+    res.status(200).json({ msg: `Herramienta ${nombre} actualizada correctamente`});
 }
 
 // elimina un tipo de herramienta
