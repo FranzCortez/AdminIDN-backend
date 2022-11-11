@@ -4,6 +4,7 @@ import shortid from "shortid";
 import Qr from "../models/Qr.js";
 import Herramienta from "../models/Herramienta.js";
 
+// genera un qr
 const generarQr = async (req, res) => {
     
     const { id } = req.params;
@@ -32,6 +33,17 @@ const generarQr = async (req, res) => {
     return res.status(200).json(qr);
 }
 
+// obtiene la fecha de mantencion del qr
+const obtenerFecha = async (req, res) => {
+    
+    const { id } = req.params;
+
+    const qr = await Qr.findOne({ where: { herramientumId: id }});
+
+    return res.status(200).json(qr);
+}
+
 export {
-    generarQr
+    generarQr,
+    obtenerFecha
 }
