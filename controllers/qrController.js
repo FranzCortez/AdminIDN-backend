@@ -30,7 +30,7 @@ const generarQr = async (req, res) => {
         token: shortid()
     });
 
-    return res.status(200).json(qr);
+    return res.status(200).json({ qr, otin: herramienta.otin });
 }
 
 // obtiene la fecha de mantencion del qr
@@ -43,6 +43,7 @@ const obtenerFecha = async (req, res) => {
     return res.status(200).json(qr);
 }
 
+// actualiza la fecha del qr
 const actualizarFecha = async (req, res) => {
 
     const { id } = req.params;
