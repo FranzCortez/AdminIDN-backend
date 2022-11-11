@@ -25,7 +25,7 @@ const generarQr = async (req, res) => {
 
     const qr = await Qr.create({
         herramientumId : id,
-        mantencion: "2022-11-11",
+        mantencion: req.body.fecha,
         id: uuidv4(),
         token: shortid()
     });
@@ -43,7 +43,25 @@ const obtenerFecha = async (req, res) => {
     return res.status(200).json(qr);
 }
 
+const actualizarFecha = async (req, res) => {
+
+    const { id } = req.params;
+
+    const qr = await Qr.findOne({ where: { herramientumId: id }});
+
+    if ( !qr ) {
+        return res.status(404).json({ msg: "Error"});
+    }
+
+    qr.mantencion = req.body.fecha;
+
+    await qr.save();
+
+    return res.status(200).json({ msg: "Actualizado correctamente"});
+}
+
 export {
     generarQr,
-    obtenerFecha
+    obtenerFecha,
+    actualizarFecha
 }
