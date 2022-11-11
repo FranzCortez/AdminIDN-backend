@@ -1,7 +1,7 @@
 import express from "express";
 import { nuevoIngresoHerramienta, ingresosFiltroTodos, ingresoInfo, editarInfo, subirArchivo, cotizacion, obtenerArchivo } from "../controllers/ingresoHerramientaController.js";
 import { subirFoto, nuevoArchivoFoto, obtenerFoto, eliminarFotos } from "../controllers/fotoGaleriaController.js";
-import { auth } from "../middleware/auth.js";
+import { auth, mantencion } from "../middleware/auth.js";
 
 const router = express.Router();
 
@@ -31,5 +31,8 @@ router.get('/ingreso/foto/:id', auth, obtenerFoto);
 
 // eliminar fotos
 router.post('/ingreso/foto/eliminar/:id', auth, eliminarFotos);
+
+// obtener datos mantencion
+router.get('/mantencion/:id', mantencion, ingresoInfo);
 
 export default router;

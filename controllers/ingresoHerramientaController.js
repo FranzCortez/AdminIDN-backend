@@ -237,6 +237,10 @@ const ingresoInfo = async ( req, res, next ) => {
         return next();
     }
 
+    if ( res.tipo === 1 ) {
+        return res.status(200).json({ ingreso , mantencion: res.mantencion});
+    }
+
     return res.status(200).json(ingreso);
 }
 

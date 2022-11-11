@@ -1,4 +1,5 @@
 import jwt from "jsonwebtoken";
+import Qr from "../models/Qr.js";
 
 const auth = (req, res, next) => {
 
@@ -27,9 +28,43 @@ const auth = (req, res, next) => {
         throw error;
     }
     res.token = revisarToken;
+    res.tipo = 0;
     next();
 }
 
+const mantencion = async (req, res, next) => {
+    
+    const authToken = req.get('authToken');
+    const authId = req.get('authId');
+
+    if(!authToken || !authId) {
+        const error = new Error('No autenticado');
+        error.statusCode = 401;
+        throw error;
+    }
+
+    try {
+        
+        const qr = await Qr.findOne({ where: { id: authId, token: authToken } });
+
+        if ( !qr ) {
+            const error = new Error('No autenticado');
+            error.statusCode = 401;
+            throw error;
+        }
+        
+        res.params ={ id: qr.herramientumId};
+        res.mantencion = qr.mantencion;
+        res.tipo = 1;
+        next();
+        
+    } catch (error) {
+        error.statusCode = 500;
+        throw error;        
+    }
+}
+
 export {
-    auth
+    auth,
+    mantencion
 }
