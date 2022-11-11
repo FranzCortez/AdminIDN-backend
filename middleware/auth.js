@@ -55,6 +55,7 @@ const mantencion = async (req, res, next) => {
         
         res.params ={ id: qr.herramientumId};
         res.mantencion = qr.mantencion;
+        res.proxima = qr.proxima;
         res.tipo = 1;
         next();
         

@@ -25,7 +25,8 @@ const generarQr = async (req, res) => {
 
     const qr = await Qr.create({
         herramientumId : id,
-        mantencion: req.body.fecha,
+        mantencion: req.body.mantencion,
+        proxima: req.body.proxima,
         id: uuidv4(),
         token: shortid()
     });
@@ -54,7 +55,8 @@ const actualizarFecha = async (req, res) => {
         return res.status(404).json({ msg: "Error"});
     }
 
-    qr.mantencion = req.body.fecha;
+    qr.mantencion = req.body.mantencion;
+    qr.proxima = req.body.proxima;
 
     await qr.save();
 

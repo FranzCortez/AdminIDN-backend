@@ -15,6 +15,10 @@ const Qr = db.define('qr', {
     mantencion: {
         type: DataTypes.DATEONLY,
         allowNull: false
+    },
+    proxima: {
+        type: DataTypes.DATEONLY,
+        allowNull: false
     }
 }, {
     timestamps: false
