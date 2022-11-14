@@ -48,15 +48,13 @@ const mantencion = async (req, res, next) => {
         const qr = await Qr.findOne({ where: { id: authId, token: authToken } });
 
         if ( !qr ) {
-            const error = new Error('No autenticado');
-            error.statusCode = 401;
-            throw error;
+            return res.status(404).json({ msg: 'No autenticado'});
         }
         
-        res.params ={ id: qr.herramientumId};
-        res.mantencion = qr.mantencion;
-        res.proxima = qr.proxima;
-        res.tipo = 1;
+        req.params ={ id: qr.herramientumId};
+        req.mantencion = qr.mantencion;
+        req.proxima = qr.proxima;
+        req.tipo = 1;
         next();
         
     } catch (error) {
