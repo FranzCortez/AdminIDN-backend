@@ -2,7 +2,7 @@ import Herramienta from "../models/Herramienta.js";
 import ClienteContacto from "../models/ClienteContacto.js";
 import ClienteEmpresa from "../models/ClienteEmpresa.js";
 import TipoHerramienta from "../models/TipoHerramienta.js";
-import Cotizacion from "../models/Cotizacion.js";
+import Archivos from "../models/Archivos.js";
 import Sequelize from "sequelize";
 import multer from "multer";
 import fs from "fs";
@@ -279,37 +279,22 @@ const editarInfo = async ( req, res, next ) => {
     return res.status(200).json(`Herramineta e Ingreso de: ${ingreso.nombre}, actualizado correctamente`);
 }
 
-// guarda una cotizacion en la base de datos
+// guarda una la ruta del archivo en la base de datos
 const cotizacion = async (req, res, next) => {
 
     const data = JSON.parse(req.body.data);
 
-    const { contenido, fechaEvaluacion, fechaCotizacion, condiciones, plazoEntrega, garantia, descuento, subtotal, neto, iva, total, otin, clienteContactoId, herramientumId } = data;
+    const { otin, herramientumId } = data;
 
-    if( !otin || !clienteContactoId ) {
+    if( !otin ) {
         return res.status(404).json({ msg: "Faltan campos importantes" });
     }
 
     try {
-        let json = {
-            contenido
-        }
-        await Cotizacion.create({
-            contenido: json,
-            fechaCotizacion,
-            fechaEvaluacion,
-            condiciones,
-            plazoEntrega,
-            garantia,
-            descuento,
-            subtotal,
-            neto,
-            iva, 
+        
+        await Archivos.create({
             herramientumId,
-            total,
-            otin,
-            clienteContactoId,
-            archivo: `/${otin}/cotizacion ${otin}.pdf`
+            rutaCotizacion: `/${otin}/cotizacion ${otin}.pdf`
         });
     
         return res.status(200).json({ msg: `Cotización creada y guardada exitosamente` });
@@ -330,7 +315,7 @@ const obtenerArchivo = async (req, res, next) => {
         return next();
     }
     
-    const ruta = await Cotizacion.scope('archivo').findOne({ where: { herramientumId: id } });
+    const ruta = await Archivos.scope('cotizacion').findOne({ where: { herramientumId: id } });
 
     return res.status(200).json(ruta);
 }
