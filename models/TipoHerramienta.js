@@ -9,13 +9,17 @@ const TipoHerramienta = db.define('tipoHerramienta', {
     descripcion: {
         type: DataTypes.TEXT,
         defaultValue: ''
+    },
+    recomendacion: {
+        type: DataTypes.TEXT,
+        defaultValue: ''
     }
 }, {
     timestamps: false,
     scopes: {
         soloNombre: {
             attributes: {
-                exclude: ['descripcion']
+                exclude: ['descripcion', 'recomendacion']
             }
         }
     }

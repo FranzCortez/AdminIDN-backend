@@ -1,11 +1,12 @@
 import TipoHerramienta from "../models/TipoHerramienta.js";
+import Herramienta from "../models/Herramienta.js";
 import Sequelize from "sequelize"
 const Op = Sequelize.Op;
 
 // agrega una nueva herramienta pero revisa que este nombre no este registrado ya en el sistema
 const nuevoTipoHerramienta = async (req, res, next) => {
 
-    const { nombre, descripcion } = req.body;
+    const { nombre, descripcion, recomendacion } = req.body;
 
     if( !nombre ){
         res.status(400).json({msg: 'Todos los campos son necesarios'});
@@ -21,7 +22,8 @@ const nuevoTipoHerramienta = async (req, res, next) => {
 
     await TipoHerramienta.create({
         nombre,
-        descripcion
+        descripcion,
+        recomendacion
     });
 
     res.status(200).json({ msg: `Herramienta ${nombre} registrada exitosamente`});
@@ -75,7 +77,7 @@ const actualizarTipoHerramienta = async (req, res, next) => {
         return next();
     }
 
-    const { nombre, descripcion } = req.body;
+    const { nombre, descripcion, recomendacion } = req.body;
 
     const existeHerramienta = await TipoHerramienta.findOne({ where: { nombre } });
 
@@ -88,6 +90,7 @@ const actualizarTipoHerramienta = async (req, res, next) => {
 
     tipoHerramienta.nombre = nombre;
     tipoHerramienta.descripcion = descripcion;
+    tipoHerramienta.recomendacion = recomendacion;
 
     await tipoHerramienta.save();
 
@@ -125,8 +128,30 @@ const buscarPorNombre = async (req, res, next) => {
         res.status(404).json({ msg: 'No existe ningún tipo de herramienta con ese nombre'});
         return next();
     }
-
+    
     res.status(200).json(herramientas);
+}
+
+// busca el tipo de herramienta por le id de un ingreso y regresa la falla
+const fallaTipoHerramienta = async (req, res, next) => {
+    
+    const { id } = req.params;
+    
+    const herramienta = await Herramienta.findByPk( id );
+
+    if ( !herramienta ) {
+        res.status(404).json({ msg: 'No existe ingreso'});
+        return next();
+    }
+    
+    const fallaHerramienta = await TipoHerramienta.findByPk( herramienta.tipoHerramientaId );
+    
+    if ( !fallaHerramienta ) {
+        res.status(404).json({ msg: 'No existe tipo herramienta'});
+        return next();
+    }
+
+    return res.status(200).json(fallaHerramienta);
 }
 
 export {
@@ -136,5 +161,6 @@ export {
     obtenerInformacionTipo,
     actualizarTipoHerramienta,
     eliminarTipoHerramienta,
-    buscarPorNombre
+    buscarPorNombre,
+    fallaTipoHerramienta
 }
