@@ -77,7 +77,21 @@ const guardarInforme = async (req, res) => {
     return res.status(200).json({ msg: 'Informe generado y guardado con exito.' });
 }
 
+const obtenerInforme = async (req, res) => {
+
+    const { id } = req.params;
+
+    const archivo = await Archivos.scope('informe').findOne({ where: { herramientumId: id } });
+
+    if ( !archivo ) {
+        return res.status(404).json({ msg: ' no hay informe generado' });
+    }
+
+    return res.status(200).json(archivo);
+}
+
 export {
     subirInforme,
-    guardarInforme
+    guardarInforme,
+    obtenerInforme
 }
