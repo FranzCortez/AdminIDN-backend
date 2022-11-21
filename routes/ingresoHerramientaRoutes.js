@@ -1,6 +1,6 @@
 import express from "express";
 import { nuevoIngresoHerramienta, ingresosFiltroTodos, ingresoInfo, editarInfo, subirArchivo, cotizacion, obtenerArchivo } from "../controllers/ingresoHerramientaController.js";
-import { subirFoto, nuevoArchivoFoto, obtenerFoto, eliminarFotos } from "../controllers/fotoGaleriaController.js";
+import { subirFoto, nuevoArchivoFoto, obtenerFoto, eliminarFotos, fotoBase } from "../controllers/fotoGaleriaController.js";
 import { auth, mantencion } from "../middleware/auth.js";
 
 const router = express.Router();
@@ -34,5 +34,8 @@ router.post('/ingreso/foto/eliminar/:id', auth, eliminarFotos);
 
 // obtener datos mantencion
 router.get('/mantencion/:id', mantencion, ingresoInfo);
+
+// obtiene las fotos pero en base 64
+router.post('/base/foto', fotoBase);
 
 export default router;

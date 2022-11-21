@@ -131,9 +131,26 @@ const eliminarFotos = async (req, res) => {
     return res.status(200).json({ msg: "Fotos eliminadas correctamente"})
 }
 
+// transforma las fotos en base 64
+const fotoBase = async (req, res) => {
+    
+    const { fotos } = req.body;
+
+    const base = [];
+
+    fotos.forEach(foto => {
+
+        var bitmap = fs.readFileSync('public'+foto);
+        base.push(new Buffer(bitmap).toString('base64'));
+    });    
+
+    return res.status(200).json(base);
+}
+
 export {
     subirFoto,
     nuevoArchivoFoto,
     obtenerFoto,
-    eliminarFotos
+    eliminarFotos,
+    fotoBase
 }
