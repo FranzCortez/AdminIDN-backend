@@ -291,11 +291,22 @@ const cotizacion = async (req, res, next) => {
     }
 
     try {
-        
-        await Archivos.create({
-            herramientumId,
-            rutaCotizacion: `/${otin}/cotizacion ${otin}.pdf`
-        });
+
+        const archivos = await Archivos.findOne({ where: { herramientumId } });
+
+        if ( archivos ) {
+
+            archivos.rutaCotizacion = `/${otin}/cotizacion ${otin}.pdf`;
+
+            await archivos.save();
+
+        } else {
+            
+            await Archivos.create({
+                herramientumId,
+                rutaCotizacion: `/${otin}/cotizacion ${otin}.pdf`
+            });
+        }
     
         return res.status(200).json({ msg: `Cotización creada y guardada exitosamente` });
 
