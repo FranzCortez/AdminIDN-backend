@@ -19,17 +19,17 @@ const Archivos = db.define('archivos', {
     scopes: {
         informe: {
             attributes: {
-                exclude: ['rutaCotizacion', 'rutaFotoGaleria', 'rutaCertificado']
+                exclude: ['rutaCotizacion', 'rutaCertificado']
             }
         },
         cotizacion: {
             attributes: {
-                exclude: ['rutaInforme', 'rutaFotoGaleria', 'rutaCertificado']
+                exclude: ['rutaInforme', 'rutaCertificado']
             }
         },
         certificado: {
             attributes: {
-                exclude: ['rutaCotizacion', 'rutaFotoGaleria', 'rutaInforme']
+                exclude: ['rutaCotizacion', 'rutaInforme']
             }
         }
     }
