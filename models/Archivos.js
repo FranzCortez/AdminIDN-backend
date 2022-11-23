@@ -11,10 +11,6 @@ const Archivos = db.define('archivos', {
         type: DataTypes.STRING,
         allowNull: true
     },
-    rutaFotoGaleria: {
-        type: DataTypes.STRING,
-        allowNull: true
-    },
     rutaCertificado: {
         type: DataTypes.STRING,
         allowNull: true
@@ -29,11 +25,6 @@ const Archivos = db.define('archivos', {
         cotizacion: {
             attributes: {
                 exclude: ['rutaInforme', 'rutaFotoGaleria', 'rutaCertificado']
-            }
-        },
-        fotoGaleria: {
-            attributes: {
-                exclude: ['rutaCotizacion', 'rutaInforme', 'rutaCertificado']
             }
         },
         certificado: {

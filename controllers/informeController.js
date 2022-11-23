@@ -83,10 +83,6 @@ const obtenerInforme = async (req, res) => {
 
     const archivo = await Archivos.scope('informe').findOne({ where: { herramientumId: id } });
 
-    if ( !archivo ) {
-        return res.status(404).json({ msg: ' no hay informe generado' });
-    }
-
     return res.status(200).json(archivo);
 }
 
