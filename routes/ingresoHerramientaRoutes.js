@@ -2,6 +2,7 @@ import express from "express";
 import { nuevoIngresoHerramienta, ingresosFiltroTodos, ingresoInfo, editarInfo, subirArchivo, cotizacion, obtenerArchivo } from "../controllers/ingresoHerramientaController.js";
 import { subirFoto, nuevoArchivoFoto, obtenerFoto, eliminarFotos, fotoBase } from "../controllers/fotoGaleriaController.js";
 import { subirInforme, guardarInforme, obtenerInforme } from "../controllers/informeController.js";
+import { subirCertificado, guardarCertificado } from "../controllers/certificadoController.js";
 import { auth, mantencion } from "../middleware/auth.js";
 
 const router = express.Router();
@@ -44,5 +45,8 @@ router.post('/ingreso/informe/:id', auth, subirInforme, guardarInforme);
 
 // obtiene el informe
 router.get('/ingreso/informe/:id', auth, obtenerInforme);
+
+// guarda el certificado
+router.post('/ingreso/certificado/:id', auth, subirCertificado, guardarCertificado );
 
 export default router;
