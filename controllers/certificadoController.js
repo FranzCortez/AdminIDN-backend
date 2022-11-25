@@ -76,7 +76,18 @@ const guardarCertificado = async ( req, res ) => {
 
 }
 
+const obtenerCertificado = async ( req, res ) => {
+
+    const { id } = req.params;
+
+    const archivo = await Archivos.scope('certificado').findOne({ where: { herramientumId: id } });
+
+    return res.status(200).json(archivo);
+
+}
+
 export {
     subirCertificado,
-    guardarCertificado
+    guardarCertificado,
+    obtenerCertificado
 }
