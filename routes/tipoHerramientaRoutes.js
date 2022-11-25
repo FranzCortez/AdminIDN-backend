@@ -1,5 +1,5 @@
 import express from "express";
-import { nuevoTipoHerramienta,obtenerInfo, obtenerNombreTodosTipo, obtenerInformacionTipo, actualizarTipoHerramienta, eliminarTipoHerramienta, buscarPorNombre, fallaTipoHerramienta } from "../controllers/tipoHerramientaController.js";
+import { nuevoTipoHerramienta,obtenerInfo, obtenerNombreTodosTipo, obtenerInformacionTipo, actualizarTipoHerramienta, eliminarTipoHerramienta, buscarPorNombre, fallaTipoHerramienta, actulizarFalla, actulizarRecomendacion } from "../controllers/tipoHerramientaController.js";
 import { auth } from "../middleware/auth.js";
 
 const router = express.Router();
@@ -25,5 +25,11 @@ router.delete('/categoria/herramienta/:id',auth , eliminarTipoHerramienta);
 router.get('/categoria/:nombre', auth, buscarPorNombre);
 
 router.get('/falla/:id', auth, fallaTipoHerramienta);
+
+// actualiza falla
+router.put('/falla/:id', auth, actulizarFalla);
+
+// actualiza recomendacion
+router.put('/recomendacion/:id', auth, actulizarRecomendacion);
 
 export default router;

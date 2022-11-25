@@ -154,6 +154,34 @@ const fallaTipoHerramienta = async (req, res, next) => {
     return res.status(200).json(fallaHerramienta);
 }
 
+// actualiza la falla de un tipo de herramienta
+const actulizarFalla = async ( req, res ) => {
+    
+    const { id } = req.params;
+
+    const herramienta = await TipoHerramienta.findByPk( id );
+
+    herramienta.descripcion = req.body.descripcion;
+
+    await herramienta.save();
+
+    return res.status(200);
+}
+
+// actualiza la recomendacion de un tipo de herramienta
+const actulizarRecomendacion = async ( req, res ) => {
+
+    const { id } = req.params;
+
+    const herramienta = await TipoHerramienta.findByPk( id );
+
+    herramienta.recomendacion = req.body.recomendacion;
+
+    await herramienta.save();
+
+    return res.status(200);
+}
+
 export {
     nuevoTipoHerramienta,
     obtenerNombreTodosTipo,
@@ -162,5 +190,7 @@ export {
     actualizarTipoHerramienta,
     eliminarTipoHerramienta,
     buscarPorNombre,
-    fallaTipoHerramienta
+    fallaTipoHerramienta,
+    actulizarFalla,
+    actulizarRecomendacion
 }
