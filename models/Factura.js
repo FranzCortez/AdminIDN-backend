@@ -6,12 +6,16 @@ const Factura = db.define('factura', {
         type: DataTypes.INTEGER,
         allowNull: false
     },
+    fechaFactura: {
+        type: DataTypes.DATEONLY,
+        allowNull: false
+    },
     numeroCompra: {
         type: DataTypes.INTEGER,
         allowNull: false
     },
     fechaCompra: {
-        type: DataTypes.DATE,
+        type: DataTypes.DATEONLY,
         allowNull: false
     },
     formaPago: {
@@ -22,13 +26,8 @@ const Factura = db.define('factura', {
         type: DataTypes.INTEGER,
         allowNull: false
     },
-    descuento: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        defaultValue: 0
-    },
     fechaPago: {
-        type: DataTypes.DATE,
+        type: DataTypes.DATEONLY,
     },
     observaciones: {
         type: DataTypes.TEXT
@@ -37,6 +36,13 @@ const Factura = db.define('factura', {
         type: DataTypes.INTEGER,
         allowNull: false,
         defaultValue: 0
+    },
+    guiaDespacho: {
+        type: DataTypes.STRING,
+        allowNull: false
+    },
+    fechaGuiaDespacho: {
+        type: DataTypes.DATEONLY,
     }
 }, {
     timestamps: false
