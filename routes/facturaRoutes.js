@@ -1,5 +1,5 @@
 import express from "express";
-import { nuevaFactura, obtenerFacturas } from "../controllers/facturaController.js";
+import { nuevaFactura, obtenerFacturas, actualizarFactura } from "../controllers/facturaController.js";
 import { auth } from "../middleware/auth.js";
 
 const router = express.Router();
@@ -9,5 +9,8 @@ router.post('/', auth , nuevaFactura);
 
 // Obtiene todas las facturas
 router.get('/', auth, obtenerFacturas);
+
+// Actualizar factura
+router.put('/', auth, actualizarFactura);
 
 export default router;

@@ -103,7 +103,60 @@ const obtenerFacturas = async ( req, res) => {
 
 }
 
+// actualiza una factura 
+const actualizarFactura = async (req, res) => {
+
+    const { id } = req.params;
+
+    const factura = await Factura.findByPk(id);
+
+    if( !factura ) {
+        return res.status(404).json({ msg: 'Error' });
+    }
+
+    const { numeroFactura, fechaFactura, numeroCompra, fechaCompra, formaPago, monto, fechaPago, observaciones, estado, fechaGuiaDespacho, guiaDespacho, guardarOtines } = req.body;
+
+    if( !numeroFactura ) {
+        return res.status(500).json({ msg: 'Campos necesarios faltante' });
+    }
+    
+    try {
+        
+        factura.numeroFactura = numeroFactura;
+        factura.fechaFactura = fechaFactura;
+        factura.numeroCompra = numeroCompra;
+        factura.fechaCompra = fechaCompra;
+        factura.formaPago = formaPago;
+        factura.monto = monto;
+        factura.fechaPago = fechaPago;
+        factura.observaciones = observaciones;
+        factura.estado = estado;
+        factura.fechaGuiaDespacho = fechaGuiaDespacho;
+        factura.guiaDespacho = guiaDespacho;
+        
+        await factura.save();
+
+        await guardarOtines.forEach(async otin => {
+            
+            const herramienta = await Herramienta.findByPk(otin.id);
+
+            herramienta.facturaId = factura.id;
+
+            await herramienta.save();
+
+        });
+
+        return res.status(200).json({ msg: 'Factura actualizada correctamente' });
+
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({ msg: 'Error al actualizar la factura, intentelo de nuevo.' });
+    }
+
+}
+
 export {
     nuevaFactura,
-    obtenerFacturas
+    obtenerFacturas,
+    actualizarFactura
 }
