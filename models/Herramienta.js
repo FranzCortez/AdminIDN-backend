@@ -65,6 +65,11 @@ const Herramienta = db.define('herramienta', {
             attributes: {
                 exclude: ['descripcion', 'comentario', 'numeroGuiaCliente', 'nombre', 'marca', 'modelo', 'numeroInterno', 'tipoHerramientumId', 'clienteContactoId', 'fecha', 'numeroSerie', 'facturaId']
             }
+        },
+        factura: {
+            attributes: {
+                exclude: ['descripcion', 'comentario', 'numeroGuiaCliente', 'nombre', 'marca', 'modelo', 'numeroInterno', 'tipoHerramientumId', 'fecha', 'numeroSerie']
+            }
         }
     }
 });

@@ -1,5 +1,10 @@
 import Factura from "../models/Factura.js";
 import Herramienta from "../models/Herramienta.js";
+import ClienteContacto from "../models/ClienteContacto.js";
+import ClienteEmpresa from "../models/ClienteEmpresa.js";
+import Sequelize from "sequelize";
+const Op = Sequelize.Op;
+
 
 // Crea una nueva factura, agregando la id de factura a una(s) herramienta(s)
 const nuevaFactura = async (req, res) => {
@@ -45,6 +50,60 @@ const nuevaFactura = async (req, res) => {
 
 }
 
+// obtiene todas las facturas
+const obtenerFacturas = async ( req, res) => {
+
+    try {
+
+        const facturas = await Factura.findAll();
+
+        // traer todos los ingresos asociados a 1 factura
+        const herramientas = await Herramienta.scope('factura').findAll({
+            where: { 
+                facturaId: { [Op.not]: null } 
+            },
+            include: {
+                model: ClienteContacto,
+                attributes: ['nombre'],
+                include: {
+                    model: ClienteEmpresa,
+                    attributes: ['id', 'nombre']
+                }
+            }
+        });
+        
+        facturas.forEach((factura, index) => {
+
+            let otines = '';
+            
+            const iguales = herramientas.filter(herramienta =>{
+
+                if ( herramienta.facturaId === factura.id ) {
+                    
+                    if ( otines === '' ) {
+                        otines = herramienta.otin;
+                    } else {
+                        otines = otines + ", " + herramienta.otin;
+                    }
+
+                    return herramienta;
+                }
+
+            });
+            factura.dataValues.herramientas = iguales;
+            factura.dataValues.otines = otines;
+        });
+
+        return res.status(200).json(facturas);
+
+    } catch (error) {
+        console.log(error);
+        return res.status(404).json({ msg: 'Aún no existen Facturas' });
+    }
+
+}
+
 export {
-    nuevaFactura
+    nuevaFactura,
+    obtenerFacturas
 }

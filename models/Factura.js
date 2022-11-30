@@ -33,7 +33,7 @@ const Factura = db.define('factura', {
         type: DataTypes.TEXT
     },
     estado: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.STRING,
         allowNull: false,
         defaultValue: 0
     },
