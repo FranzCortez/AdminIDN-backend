@@ -235,10 +235,54 @@ const pagarFactura = async (req, res) => {
     return res.status(200).json({ msg: 'Factura pagada' });
 }
 
+// obtiene una factura en especifico
+const obtenerFactura = async ( req, res) => {
+
+    const { id } = req.params;
+
+    const factura = await Factura.findByPk(id);
+
+    // traer todos los ingresos asociados a 1 factura
+    const herramientas = await Herramienta.scope('factura').findAll({
+        where: { 
+            facturaId: factura.id 
+        },
+        include: {
+            model: ClienteContacto,
+            attributes: ['nombre', 'clienteEmpresaId'],
+            include: {
+                model: ClienteEmpresa,
+                attributes: ['id', 'nombre']
+            }
+        }
+    });
+    
+    let otines = '';
+        
+    const iguales = herramientas.filter(herramienta =>{
+
+        if ( otines === '' ) {
+            otines = herramienta.otin;
+        } else {
+            otines = otines + ", " + herramienta.otin;
+        }
+
+        return herramienta;
+    });
+
+    factura.dataValues.herramientas = iguales;
+    factura.dataValues.otines = otines;
+    factura.dataValues.empresaId = factura.dataValues.herramientas[0].clienteContacto.clienteEmpresaId;
+
+    return res.status(200).json(factura);
+
+}
+
 export {
     nuevaFactura,
     obtenerFacturas,
     actualizarFactura,
     notaCredito,
-    pagarFactura
+    pagarFactura,
+    obtenerFactura
 }
