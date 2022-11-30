@@ -216,9 +216,29 @@ const notaCredito = async (req, res) => {
     res.status(200).json({ msg: 'Factura anulada correctamente' });
 }
 
+// pagar una factura
+const pagarFactura = async (req, res) => {
+
+    const { id } = req.params;
+
+    const factura = await Factura.findByPk(id);
+
+    if ( !factura ) {
+        return res.status(404).json({ msg: 'No existe Factura' });
+    }
+
+    factura.fechaPago = req.body.fechaPago;
+    factura.estado = 'Pagado';
+    
+    await factura.save();
+
+    return res.status(200).json({ msg: 'Factura pagada' });
+}
+
 export {
     nuevaFactura,
     obtenerFacturas,
     actualizarFactura,
-    notaCredito
+    notaCredito,
+    pagarFactura
 }
