@@ -54,7 +54,9 @@ const nuevaFactura = async (req, res) => {
 const obtenerFacturas = async ( req, res) => {
 
     try {
-
+        
+        await actualizarEstado();
+        
         const facturas = await Factura.findAll();
 
         // traer todos los ingresos asociados a 1 factura
@@ -154,6 +156,48 @@ const actualizarFactura = async (req, res) => {
     }
 
 }
+
+// actualiza el estado de una factura
+const actualizarEstado = async () => {
+    
+    const facturas = await Factura.findAll();
+
+    await facturas.forEach(async factura => {
+
+        if ( await(factura.formaPago === 'Crédito' && factura.estado === 'Pendiente') ){
+
+            const fechaLimite = await addDaysToDate(factura.fechaFactura, 30);
+            
+            const mora = await diffInDays(new Date(), fechaLimite)
+            
+            if ( mora > 0) {
+                factura.estado = 'Vencido';
+            }
+            
+        } else if ( await (factura.formaPago === 'Contado' && factura.estado === 'Pendiente') ) {
+            
+            const fechaLimite = await addDaysToDate(factura.fechaFactura, 1);
+            
+            const mora = await diffInDays(new Date(), fechaLimite)
+        
+            if ( mora > 0) {
+                factura.estado = 'Vencido';
+            }
+        }
+
+        await factura.save();
+    });
+
+}
+
+function addDaysToDate(date, days){
+    var res = new Date(date);
+    res.setDate(res.getDate() + days);
+    return res;
+}
+
+
+const diffInDays = (x, y) => Math.floor((x - y) / (1000 * 60 * 60 * 24));
 
 export {
     nuevaFactura,
