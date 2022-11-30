@@ -43,6 +43,9 @@ const Factura = db.define('factura', {
     },
     fechaGuiaDespacho: {
         type: DataTypes.DATEONLY,
+    },
+    numeroNotaCredito: {
+        type: DataTypes.STRING,
     }
 }, {
     timestamps: false

@@ -196,11 +196,29 @@ function addDaysToDate(date, days){
     return res;
 }
 
-
 const diffInDays = (x, y) => Math.floor((x - y) / (1000 * 60 * 60 * 24));
+
+// crea una nota de credito
+const notaCredito = async (req, res) => {
+
+    const { id } = req.params;
+
+    const factura = await Factura.findByPk(id);
+
+    if ( !factura ) {
+        return res.status(404).json({ msg: 'No existe Factura' });
+    }
+
+    factura.estado = 'Anulada';
+
+    await factura.save();
+
+    res.status(200).json({ msg: 'Factura anulada correctamente' });
+}
 
 export {
     nuevaFactura,
     obtenerFacturas,
-    actualizarFactura
+    actualizarFactura,
+    notaCredito
 }
