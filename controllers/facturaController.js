@@ -37,6 +37,14 @@ const nuevaFactura = async (req, res) => {
 
             herramienta.facturaId = factura.id;
 
+            if ( herramienta.fechaGuiaDespacho === null ) {
+                herramienta.fechaGuiaDespacho = fechaGuiaDespacho;
+            }
+
+            if ( herramienta.guiaDespacho === '-' || herramienta.guiaDespacho === '' ) {
+                herramienta.guiaDespacho = guiaDespacho;
+            }
+
             await herramienta.save();
 
         });
@@ -56,8 +64,40 @@ const obtenerFacturas = async ( req, res) => {
     try {
         
         await actualizarEstado();
+
+        const { idEmpresa, estado, numeroFactura, fechaFactura } = req.body;
+
+        let where = {};
+
+        if ( fechaFactura !== '' && fechaFactura ) {
+            where.fechaFactura = {
+                [Op.eq] : fechaFactura
+            }
+        }
+
+        if ( numeroFactura !== '' && numeroFactura ) {
+            where.numeroFactura = {
+                [Op.eq] : numeroFactura
+            }
+        }
+
+        if ( estado !== '' && estado && estado !== 'Todos' ) {
+            where.estado = {
+                [Op.eq] : estado
+            }
+        }
         
-        const facturas = await Factura.findAll();
+        const facturas = await Factura.findAll({ where });
+
+        where = {};
+
+        if ( idEmpresa !== '' && idEmpresa && idEmpresa !== '0' ) {
+            
+            where.clienteEmpresaId = {
+                [Op.eq] : idEmpresa
+            }
+
+        }
 
         // traer todos los ingresos asociados a 1 factura
         const herramientas = await Herramienta.scope('factura').findAll({
@@ -66,15 +106,18 @@ const obtenerFacturas = async ( req, res) => {
             },
             include: {
                 model: ClienteContacto,
-                attributes: ['nombre'],
+                where,
+                attributes: ['nombre', 'clienteEmpresaId'],
                 include: {
-                    model: ClienteEmpresa,
+                    model: ClienteEmpresa,                    
                     attributes: ['id', 'nombre']
                 }
             }
         });
         
-        facturas.forEach((factura, index) => {
+        const facturaFiltro = [];
+
+        facturas.forEach((factura) => {
 
             let otines = '';
             
@@ -94,9 +137,13 @@ const obtenerFacturas = async ( req, res) => {
             });
             factura.dataValues.herramientas = iguales;
             factura.dataValues.otines = otines;
+
+            if ( iguales.length !== 0 ) {
+                facturaFiltro.push(factura);
+            }
         });
 
-        return res.status(200).json(facturas);
+        return res.status(200).json(facturaFiltro);
 
     } catch (error) {
         console.log(error);
@@ -210,6 +257,7 @@ const notaCredito = async (req, res) => {
     }
 
     factura.estado = 'Anulada';
+    factura.numeroNotaCredito = req.body.numeroNotaCredito;
 
     await factura.save();
 
