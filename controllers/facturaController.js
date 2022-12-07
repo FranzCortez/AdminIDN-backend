@@ -30,7 +30,7 @@ const nuevaFactura = async (req, res) => {
             fechaGuiaDespacho,
             guiaDespacho
         });
-        
+                
         await guardarOtines.forEach(async otin => {
             
             const herramienta = await Herramienta.findByPk(otin.id);
@@ -65,7 +65,7 @@ const obtenerFacturas = async ( req, res) => {
         
         await actualizarEstado();
 
-        const { idEmpresa, estado, numeroFactura, fechaFactura } = req.body;
+        const { idEmpresa, estado, numeroFactura, fechaFactura, mes, year } = req.body;
 
         let where = {};
 
@@ -73,7 +73,7 @@ const obtenerFacturas = async ( req, res) => {
             where.fechaFactura = {
                 [Op.eq] : fechaFactura
             }
-        }
+        }               
 
         if ( numeroFactura !== '' && numeroFactura ) {
             where.numeroFactura = {
@@ -87,7 +87,7 @@ const obtenerFacturas = async ( req, res) => {
             }
         }
         
-        const facturas = await Factura.findAll({ where });
+        let facturas = await Factura.findAll({ where });
 
         where = {};
 
@@ -96,6 +96,18 @@ const obtenerFacturas = async ( req, res) => {
             where.clienteEmpresaId = {
                 [Op.eq] : idEmpresa
             }
+
+        }
+
+        if ( mes !== '' && mes ) {
+            
+            facturas = facturas.filter( factura => factura.fechaFactura.split("-")[1] == mes)
+
+        }
+
+        if ( year !== '' && year ) {
+            
+            facturas = facturas.filter( factura => factura.fechaFactura.split("-")[0] == year)
 
         }
 
@@ -138,9 +150,7 @@ const obtenerFacturas = async ( req, res) => {
             factura.dataValues.herramientas = iguales;
             factura.dataValues.otines = otines;
 
-            if ( iguales.length !== 0 ) {
-                facturaFiltro.push(factura);
-            }
+            facturaFiltro.push(factura);
         });
 
         return res.status(200).json(facturaFiltro);
@@ -258,6 +268,13 @@ const notaCredito = async (req, res) => {
 
     factura.estado = 'Anulada';
     factura.numeroNotaCredito = req.body.numeroNotaCredito;
+
+    const herramientas = await Herramienta.scope('factura').findAll({ where: { facturaId : id } });
+
+    await herramientas.forEach(async herramienta => {
+        herramienta.facturaId = null;
+        await herramienta.save();
+    });
 
     await factura.save();
 
