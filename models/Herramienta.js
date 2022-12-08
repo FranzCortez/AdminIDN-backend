@@ -46,7 +46,8 @@ const Herramienta = db.define('herramienta', {
         defaultValue: '-'
     },
     fechaGuiaDespacho: {
-        type: DataTypes.DATEONLY
+        type: DataTypes.DATEONLY,
+        allowNull: true
     },
     activo: {
         type: DataTypes.BOOLEAN,
