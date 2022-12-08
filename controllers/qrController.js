@@ -39,7 +39,12 @@ const obtenerFecha = async (req, res) => {
     
     const { id } = req.params;
 
+    const herramienta = await Herramienta.findByPk(id);
+
     const qr = await Qr.findOne({ where: { herramientumId: id }});
+
+    qr.dataValues.guiaDespacho = herramienta.guiaDespacho;
+    qr.dataValues.fechaGuiaDespacho = herramienta.fechaGuiaDespacho;
 
     return res.status(200).json(qr);
 }
@@ -54,6 +59,13 @@ const actualizarFecha = async (req, res) => {
     if ( !qr ) {
         return res.status(404).json({ msg: "Error"});
     }
+
+    const herramienta = await Herramienta.findByPk(id);
+
+    herramienta.guiaDespacho = req.body.guiaDespacho;
+    herramienta.fechaGuiaDespacho = req.body.fechaGuiaDespacho;
+
+    await herramienta.save();
 
     qr.mantencion = req.body.mantencion;
     qr.proxima = req.body.proxima;
