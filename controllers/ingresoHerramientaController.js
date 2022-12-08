@@ -49,7 +49,7 @@ const subirArchivo = async (req, res, next) => {
 // crea un nuevo ingreso y herramienta
 const nuevoIngresoHerramienta = async (req, res, next) => {
     
-    const { nombre, marca, comentario, modelo, numeroInterno, numeroGuiaCliente, tipoHerramientaId, clienteContactoId, fecha, numeroSerie } = req.body;
+    const { nombre, marca, comentario, modelo, numeroInterno, numeroGuiaCliente, tipoHerramientaId, clienteContactoId, fecha, numeroSerie, guiaDespacho, fechaGuiaDespacho } = req.body;
 
     if( !nombre, !marca, !modelo ) {
         res.status(400).json({ msg: 'Todos los campos son necesarios'});
@@ -85,7 +85,9 @@ const nuevoIngresoHerramienta = async (req, res, next) => {
             numeroGuiaCliente,
             numeroSerie,
             tipoHerramientaId, 
-            clienteContactoId
+            clienteContactoId,
+            guiaDespacho,
+            fechaGuiaDespacho
         });
 
         const dir = `./public/${otin}`
