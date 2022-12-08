@@ -8,10 +8,10 @@ const router = express.Router();
 router.post('/', auth , nuevaFactura);
 
 // Obtiene todas las facturas
-router.get('/', auth, obtenerFacturas);
+router.post('/filtro', auth, obtenerFacturas);
 
 // Actualizar factura
-router.put('/', auth, actualizarFactura);
+router.put('/:id', auth, actualizarFactura);
 
 // Anula una factura
 router.post('/anular/:id', auth, notaCredito);
