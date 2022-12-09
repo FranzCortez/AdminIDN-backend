@@ -87,7 +87,10 @@ const obtenerFacturas = async ( req, res) => {
             }
         }
         
-        let facturas = await Factura.findAll({ where });
+        let facturas = await Factura.findAll({ 
+            where,
+            order: [[ 'numeroFactura', 'DESC' ]]
+        });
 
         where = {};
 
@@ -221,7 +224,7 @@ const actualizarEstado = async () => {
 
     await facturas.forEach(async factura => {
 
-        if ( await(factura.formaPago === 'Crédito' && factura.estado === 'Pendiente') ){
+        if ( factura.formaPago === 'Crédito' && factura.estado === 'Pendiente' ){
 
             const fechaLimite = await addDaysToDate(factura.fechaFactura, 30);
             
@@ -231,7 +234,7 @@ const actualizarEstado = async () => {
                 factura.estado = 'Vencido';
             }
             
-        } else if ( await (factura.formaPago === 'Contado' && factura.estado === 'Pendiente') ) {
+        } else if ( factura.formaPago === 'Contado' && factura.estado === 'Pendiente' ) {
             
             const fechaLimite = await addDaysToDate(factura.fechaFactura, 1);
             
