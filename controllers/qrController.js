@@ -43,6 +43,11 @@ const obtenerFecha = async (req, res) => {
 
     const qr = await Qr.findOne({ where: { herramientumId: id }});
 
+    if ( !qr ) {
+
+        return res.status(200).json(qr);
+    }
+
     qr.dataValues.guiaDespacho = herramienta.guiaDespacho;
     qr.dataValues.fechaGuiaDespacho = herramienta.fechaGuiaDespacho;
 
