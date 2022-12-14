@@ -198,6 +198,17 @@ const actualizarFactura = async (req, res) => {
         
         await factura.save();
 
+        const herramientaAntigua = await Herramienta.findAll({ where: { facturaId: factura.id } });
+
+        await herramientaAntigua.forEach(async herramienta => {
+            
+            if ( !guardarOtines.find(otin => otin.id == herramienta.id) ){
+                herramienta.facturaId = null;
+                await herramienta.save();
+            }
+
+        });
+
         await guardarOtines.forEach(async otin => {
             
             const herramienta = await Herramienta.findByPk(otin.id);
