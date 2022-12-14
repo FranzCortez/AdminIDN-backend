@@ -11,7 +11,7 @@ const Factura = db.define('factura', {
         allowNull: true
     },
     numeroCompra: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.STRING,
         allowNull: true
     },
     fechaCompra: {
