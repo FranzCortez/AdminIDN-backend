@@ -263,7 +263,7 @@ const editarInfo = async ( req, res, next ) => {
         return next();
     }
 
-    const { comentario, nombre, marca, modelo, numeroInterno, numeroGuiaCliente, tipoHerramientaId, clienteContactoId, fecha, numeroSerie } = req.body;
+    const { comentario, nombre, marca, modelo, numeroInterno, numeroGuiaCliente, tipoHerramientaId, clienteContactoId, fecha, numeroSerie, guiaDespacho, fechaGuiaDespacho } = req.body;
 
     ingreso.comentario = comentario;
     ingreso.nombre = nombre;
@@ -275,6 +275,8 @@ const editarInfo = async ( req, res, next ) => {
     ingreso.numeroGuiaCliente = numeroGuiaCliente;
     ingreso.tipoHerramientaId = tipoHerramientaId;
     ingreso.clienteContactoId = clienteContactoId;
+    ingreso.guiaDespacho = guiaDespacho;
+    ingreso.fechaGuiaDespacho = fechaGuiaDespacho;
 
     await ingreso.save();
 
