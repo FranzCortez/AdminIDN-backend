@@ -32,7 +32,9 @@ const nuevoTipoHerramienta = async (req, res, next) => {
 // obtiene todos los tipos de herramienta, pero solo el nombre
 const obtenerNombreTodosTipo = async (req, res, next) => {
 
-    const nombresTipo = await TipoHerramienta.scope('soloNombre').findAll({});
+    const nombresTipo = await TipoHerramienta.scope('soloNombre').findAll({
+        order: [[ 'nombre', 'ASC' ]]
+    });
 
     res.status(200).json(nombresTipo);
 
@@ -41,7 +43,9 @@ const obtenerNombreTodosTipo = async (req, res, next) => {
 // obtiene toda la info de todos los tipos
 const obtenerInfo = async (req, res, next) => {
     
-    const tiposHerramienta = await TipoHerramienta.findAll({});
+    const tiposHerramienta = await TipoHerramienta.findAll({
+        order: [[ 'nombre', 'ASC' ]]
+    });
     
     if(!tiposHerramienta){
         return res.status(404).json({msg: "No existen tipos de herramientas en el sistema"});
