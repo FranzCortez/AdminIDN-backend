@@ -45,7 +45,11 @@ const todosClienteEmpresa = async (req, res) => {
 
     const offset = (parseInt(req.params.pag) || 0) * 10;
 
-    const empresas = await ClienteEmpresa.findAll({ offset: offset, limit: 10});
+    const empresas = await ClienteEmpresa.findAll({ 
+        offset: offset, 
+        limit: 10,
+        order: [[ 'nombre', 'ASC' ]]
+    });
 
     const cantEmpresas = await ClienteEmpresa.findAll({});
 
