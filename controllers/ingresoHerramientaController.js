@@ -111,7 +111,7 @@ const nuevoIngresoHerramienta = async (req, res, next) => {
 const ingresosFiltroTodos = async (req, res, next) => {
     
     const { fecha, otin, nombre, marca, modelo, numeroInterno, numeroSerie, empresaId, tipoHerramientaId, activo } = req.body;
-
+    
     let where = {}
     let include = [];
 
@@ -152,7 +152,7 @@ const ingresosFiltroTodos = async (req, res, next) => {
     }
  
     if( tipoHerramientaId !== '' && tipoHerramientaId && tipoHerramientaId !== '0' ) {
-        where.tipoHerramientumId = {
+        where.tipoHerramientaId = {
             [Op.eq] : tipoHerramientaId
         }
     }
