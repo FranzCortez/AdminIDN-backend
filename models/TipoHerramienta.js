@@ -13,6 +13,10 @@ const TipoHerramienta = db.define('tipoHerramienta', {
     recomendacion: {
         type: DataTypes.TEXT,
         defaultValue: ''
+    },
+    conclusion: {
+        type: DataTypes.TEXT,
+        defaultValue: ''
     }
 }, {
     timestamps: false,

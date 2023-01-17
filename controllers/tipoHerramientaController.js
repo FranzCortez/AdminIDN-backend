@@ -6,7 +6,7 @@ const Op = Sequelize.Op;
 // agrega una nueva herramienta pero revisa que este nombre no este registrado ya en el sistema
 const nuevoTipoHerramienta = async (req, res, next) => {
 
-    const { nombre, descripcion, recomendacion } = req.body;
+    const { nombre, descripcion, recomendacion, conclusion } = req.body;
 
     if( !nombre ){
         res.status(400).json({msg: 'Todos los campos son necesarios'});
@@ -23,7 +23,8 @@ const nuevoTipoHerramienta = async (req, res, next) => {
     await TipoHerramienta.create({
         nombre,
         descripcion,
-        recomendacion
+        recomendacion,
+        conclusion
     });
 
     res.status(200).json({ msg: `Herramienta ${nombre} registrada exitosamente`});
@@ -81,7 +82,7 @@ const actualizarTipoHerramienta = async (req, res, next) => {
         return next();
     }
 
-    const { nombre, descripcion, recomendacion } = req.body;
+    const { nombre, descripcion, recomendacion, conclusion } = req.body;
 
     const existeHerramienta = await TipoHerramienta.findOne({ where: { nombre } });
 
@@ -95,6 +96,7 @@ const actualizarTipoHerramienta = async (req, res, next) => {
     tipoHerramienta.nombre = nombre;
     tipoHerramienta.descripcion = descripcion;
     tipoHerramienta.recomendacion = recomendacion;
+    tipoHerramienta.conclusion = conclusion;
 
     await tipoHerramienta.save();
 
@@ -186,6 +188,20 @@ const actulizarRecomendacion = async ( req, res ) => {
     return res.status(200);
 }
 
+// actualiza la conclusion de un tipo de herramienta
+const actulizarConclusion = async ( req, res ) => {
+
+    const { id } = req.params;
+
+    const herramienta = await TipoHerramienta.findByPk( id );
+
+    herramienta.conclusion = req.body.conclusion;
+
+    await herramienta.save();
+
+    return res.status(200);
+}
+
 export {
     nuevoTipoHerramienta,
     obtenerNombreTodosTipo,
@@ -196,5 +212,6 @@ export {
     buscarPorNombre,
     fallaTipoHerramienta,
     actulizarFalla,
-    actulizarRecomendacion
+    actulizarRecomendacion,
+    actulizarConclusion
 }

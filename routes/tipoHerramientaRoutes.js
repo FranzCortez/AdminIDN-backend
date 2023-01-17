@@ -1,5 +1,5 @@
 import express from "express";
-import { nuevoTipoHerramienta,obtenerInfo, obtenerNombreTodosTipo, obtenerInformacionTipo, actualizarTipoHerramienta, eliminarTipoHerramienta, buscarPorNombre, fallaTipoHerramienta, actulizarFalla, actulizarRecomendacion } from "../controllers/tipoHerramientaController.js";
+import { nuevoTipoHerramienta,obtenerInfo, obtenerNombreTodosTipo, obtenerInformacionTipo, actualizarTipoHerramienta, eliminarTipoHerramienta, buscarPorNombre, fallaTipoHerramienta, actulizarFalla, actulizarRecomendacion, actulizarConclusion } from "../controllers/tipoHerramientaController.js";
 import { auth } from "../middleware/auth.js";
 
 const router = express.Router();
@@ -31,5 +31,8 @@ router.put('/falla/:id', auth, actulizarFalla);
 
 // actualiza recomendacion
 router.put('/recomendacion/:id', auth, actulizarRecomendacion);
+
+// actualiza conclusion
+router.put('/conclusion/:id', auth, actulizarConclusion);
 
 export default router;
