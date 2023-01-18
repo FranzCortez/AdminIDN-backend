@@ -20,11 +20,15 @@ const generarQr = async (req, res) => {
     }
 
     herramienta.activo = false;
+    herramienta.fechaGuiaDespacho = req.body.fechaGuiaDespacho;
+    herramienta.guiaDespacho = req.body.guiaDespacho;
 
     herramienta.save();
 
     const qr = await Qr.create({
         herramientumId : id,
+        guiaDespacho: req.body.guiaDespacho,
+        fechaGuiaDespacho: req.body.fechaGuiaDespacho,
         mantencion: req.body.mantencion,
         proxima: req.body.proxima,
         id: uuidv4(),
