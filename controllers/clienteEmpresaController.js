@@ -139,7 +139,9 @@ const buscarPorNombre = async (req, res, next) => {
 }
 
 const todosNombres = async (req, res) => {
-    const empresas = await ClienteEmpresa.scope('nombre').findAll({});
+    const empresas = await ClienteEmpresa.scope('nombre').findAll({
+        order: [[ 'nombre', 'ASC' ]]
+    });
 
     return res.status(200).json(empresas)
 }
