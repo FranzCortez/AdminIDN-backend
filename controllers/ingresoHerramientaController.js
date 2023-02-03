@@ -197,7 +197,7 @@ const ingresosFiltroTodos = async (req, res, next) => {
     const herramientas = await Herramienta.scope('filtro').findAll({ 
         where,
         include,
-        order: [['id', 'ASC']]
+        order: [['otin', 'ASC']]
     });
 
     return res.status(200).json(herramientas);

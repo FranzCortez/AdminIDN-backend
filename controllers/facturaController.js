@@ -254,6 +254,16 @@ const actualizarEstado = async () => {
             if ( mora > 0) {
                 factura.estado = 'Vencido';
             }
+        } else if ( factura.estado === 'Pendiente' ) {
+
+            const fechaLimite = await addDaysToDate(factura.fechaFactura, 1);
+            
+            const mora = await diffInDays(new Date(), fechaLimite)
+        
+            if ( mora > 0) {
+                factura.estado = 'Vencido';
+            } 
+            
         }
 
         await factura.save();
