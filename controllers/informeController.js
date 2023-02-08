@@ -1,3 +1,4 @@
+import Informe from "../models/Informe.js";
 import Archivos from "../models/Archivos.js";
 
 import multer from "multer";
@@ -51,7 +52,6 @@ const subirInforme = async (req, res, next) => {
     })
 }
 
-
 const guardarInforme = async (req, res) => {
 
     const { id } = req.params;
@@ -86,8 +86,75 @@ const obtenerInforme = async (req, res) => {
     return res.status(200).json(archivo);
 }
 
+const guardarDatosInforme = async (req, res) => {
+
+    const { nombreCliente, fechaEvaluacion, fechaCotizacion, condiciones, plazoEntrega, garantia, gastos, contenido, descuento, tecnico, fechaInfo, falla, cuadroA, cuadroB, fallaText, conclusion, recomendacion, id } = req.body;
+    
+    const info = await Informe.findOne({ where: { herramientumId: id } });
+
+    if ( info ) {
+
+        info.nombreCliente = nombreCliente;
+        info.fechaEvaluacion = fechaEvaluacion;
+        info.fechaCotizacion = fechaCotizacion;
+        info.condiciones = condiciones;
+        info.plazoEntrega = plazoEntrega;
+        info.garantia = garantia;
+        info.gastos = gastos;
+        info.contenido = JSON.stringify(contenido);
+        info.descuento = descuento;
+        info.tecnico = tecnico;
+        info.fechaInfo = fechaInfo;
+        info.falla = falla;
+        info.cuadroA = JSON.stringify(cuadroA);
+        info.cuadroB = JSON.stringify(cuadroB);
+        info.fallaText = fallaText.join('\n');
+        info.conclusion = conclusion.join('\n');
+        info.recomendacion = recomendacion.join('\n');
+
+        await info.save();
+
+        return res.status(200).json({ msg: 'Datos de informe guardados' });
+
+    }
+
+    await Informe.create({
+        nombreCliente,
+        fechaEvaluacion,
+        fechaCotizacion,
+        condiciones,
+        plazoEntrega,
+        garantia,
+        gastos,
+        contenido :JSON.stringify(contenido),
+        descuento,
+        tecnico,
+        fechaInfo,
+        falla,
+        cuadroA : JSON.stringify(cuadroA),
+        cuadroB : JSON.stringify(cuadroB),
+        fallaText : fallaText.join('\n'),
+        conclusion : conclusion.join('\n'),
+        recomendacion : recomendacion.join('\n'),
+        herramientumId: id
+    });
+
+    return res.status(200).json({ msg: 'Datos de informe guardados' });
+}
+
+const obtenerDatosInforme = async (req, res) => {
+
+    const { id } = req.params;
+
+    const info = await Informe.findOne( { where: {herramientumId: id} } );
+
+    res.status(200).json(info);
+}
+
 export {
     subirInforme,
     guardarInforme,
-    obtenerInforme
+    obtenerInforme,
+    guardarDatosInforme,
+    obtenerDatosInforme
 }
