@@ -373,5 +373,6 @@ export {
     actualizarFactura,
     notaCredito,
     pagarFactura,
-    obtenerFactura
+    obtenerFactura,
+    actualizarEstado
 }

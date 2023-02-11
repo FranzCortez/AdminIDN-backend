@@ -1,7 +1,9 @@
+import { actualizarEstado } from "./facturaController.js";
 import Herramienta from "../models/Herramienta.js";
 import ClienteContacto from "../models/ClienteContacto.js";
 import ClienteEmpresa from "../models/ClienteEmpresa.js";
 import TipoHerramienta from "../models/TipoHerramienta.js";
+import Factura from "../models/Factura.js";
 import Archivos from "../models/Archivos.js";
 import Sequelize from "sequelize";
 import multer from "multer";
@@ -193,6 +195,13 @@ const ingresosFiltroTodos = async (req, res, next) => {
             [Op.eq] : activo
         }
     }
+
+    await actualizarEstado();
+
+    include.push({
+        model: Factura,
+        attributes: ['fechaFactura', 'estado', 'numeroFactura']
+    })
 
     const herramientas = await Herramienta.scope('filtro').findAll({ 
         where,
