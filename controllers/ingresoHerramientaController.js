@@ -201,7 +201,7 @@ const ingresosFiltroTodos = async (req, res, next) => {
     include.push({
         model: Factura,
         attributes: ['fechaFactura', 'estado', 'numeroFactura']
-    })
+    });
 
     const herramientas = await Herramienta.scope('filtro').findAll({ 
         where,
@@ -209,7 +209,20 @@ const ingresosFiltroTodos = async (req, res, next) => {
         order: [['otin', 'ASC']]
     });
 
-    return res.status(200).json(herramientas);
+    const archivos = await Archivos.scope('cotizacion').findAll();
+    
+    const herramientaFiltro = herramientas.map( herramienta =>{
+        const existe = archivos.find(archivo => archivo.herramientumId === herramienta.id && archivo.rutaCotizacion !== null);
+        // guardar referencia y referencia null
+        if(existe) {
+            herramienta.dataValues.archivo = true;
+        } else {
+            herramienta.dataValues.archivo = false;
+        }
+        return herramienta;
+    });
+    
+    return res.status(200).json(herramientaFiltro);
 
 }
 
