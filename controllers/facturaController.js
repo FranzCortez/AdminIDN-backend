@@ -66,7 +66,7 @@ const obtenerFacturas = async ( req, res) => {
         await actualizarEstado();
 
         const { idEmpresa, estado, numeroFactura, fechaFactura, mes, year } = req.body;
-
+        
         let where = {};
 
         if ( fechaFactura !== '' && fechaFactura ) {
@@ -150,10 +150,14 @@ const obtenerFacturas = async ( req, res) => {
                 }
 
             });
-            factura.dataValues.herramientas = iguales;
-            factura.dataValues.otines = otines;
 
-            facturaFiltro.push(factura);
+            if( iguales.length > 0 ) {
+                factura.dataValues.herramientas = iguales;
+                factura.dataValues.otines = otines;
+    
+                facturaFiltro.push(factura);
+            }
+
         });
 
         return res.status(200).json(facturaFiltro);
