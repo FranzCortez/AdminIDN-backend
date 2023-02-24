@@ -1,7 +1,7 @@
 import express from "express";
 import { nuevoIngresoHerramienta, ingresosFiltroTodos, ingresoInfo, editarInfo, subirArchivo, cotizacion, obtenerArchivo } from "../controllers/ingresoHerramientaController.js";
 import { subirFoto, nuevoArchivoFoto, obtenerFoto, eliminarFotos, fotoBase } from "../controllers/fotoGaleriaController.js";
-import { subirInforme, guardarInforme, obtenerInforme, guardarDatosInforme, obtenerDatosInforme } from "../controllers/informeController.js";
+import { subirInforme, guardarInforme, obtenerInforme, guardarDatosInforme, obtenerDatosInforme, obtenerConclusionInforme } from "../controllers/informeController.js";
 import { subirCertificado, guardarCertificado, obtenerCertificado } from "../controllers/certificadoController.js";
 import { auth, mantencion } from "../middleware/auth.js";
 
@@ -57,5 +57,8 @@ router.post('/info', auth, guardarDatosInforme);
 
 // obtener datos de informe
 router.get('/info/:id', auth, obtenerDatosInforme);
+
+//obtener conclusion de informe
+router.get('/info/conclu/:id', auth, obtenerConclusionInforme);
 
 export default router;

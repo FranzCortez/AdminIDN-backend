@@ -55,7 +55,14 @@ const Informe = db.define('informe', {
         type: DataTypes.TEXT
     }
 }, {
-    timestamps: false
+    timestamps: false,
+    scopes: {
+        conclusion : {
+            attributes: {
+                exclude: ['fechaEvaluacion', 'fechaCotizacion', 'condiciones', 'plazoEntrega', 'garantia', 'gastos', 'contenido', 'descuento', 'tecnico', 'fechaInfo', 'falla', 'cuadroA', 'cuadroB', 'fallaText', 'recomendacion']
+            }
+        }
+    }
 });
 
 Informe.belongsTo(Herramienta);

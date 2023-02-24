@@ -151,10 +151,21 @@ const obtenerDatosInforme = async (req, res) => {
     res.status(200).json(info);
 }
 
+const obtenerConclusionInforme = async (req, res) => {
+    
+    const { id } = req.params;
+
+    const info = await Informe.scope('conclusion').findOne({ where: { herramientumId: id } });
+
+    res.status(200).json(info);
+
+}
+
 export {
     subirInforme,
     guardarInforme,
     obtenerInforme,
     guardarDatosInforme,
-    obtenerDatosInforme
+    obtenerDatosInforme,
+    obtenerConclusionInforme
 }
