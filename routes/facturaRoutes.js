@@ -1,5 +1,5 @@
 import express from "express";
-import { nuevaFactura, obtenerFacturas, actualizarFactura, notaCredito, pagarFactura, obtenerFactura } from "../controllers/facturaController.js";
+import { nuevaFactura, obtenerFacturas, actualizarFactura, notaCredito, pagarFactura, obtenerFactura, numeroFactura } from "../controllers/facturaController.js";
 import { auth } from "../middleware/auth.js";
 
 const router = express.Router();
@@ -21,5 +21,8 @@ router.post('/pagar/:id', auth, pagarFactura);
 
 // obtiene 1 factura por id
 router.get('/:id', auth, obtenerFactura);
+
+// obtener numero de factura automatico
+router.get('/', auth, numeroFactura);
 
 export default router;

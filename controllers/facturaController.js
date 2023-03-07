@@ -373,6 +373,17 @@ const obtenerFactura = async ( req, res) => {
 
 }
 
+const numeroFactura = async (req, res) => {
+
+    const factura = await Factura.findAll({
+        limit: 1,
+        order: [ [ 'id', 'DESC' ]]
+    });
+    
+    return res.status(200).json({ numero: factura[0].numeroFactura});
+
+}
+
 export {
     nuevaFactura,
     obtenerFacturas,
@@ -380,5 +391,6 @@ export {
     notaCredito,
     pagarFactura,
     obtenerFactura,
-    actualizarEstado
+    actualizarEstado,
+    numeroFactura
 }
