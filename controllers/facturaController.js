@@ -247,7 +247,7 @@ const actualizarEstado = async () => {
             
             const mora = await diffInDays(new Date(), fechaLimite)
             
-            if ( mora > 0) {
+            if ( mora >= -1) {
                 factura.estado = 'Vencido';
             }
             
@@ -257,7 +257,7 @@ const actualizarEstado = async () => {
             
             const mora = await diffInDays(new Date(), fechaLimite)
         
-            if ( mora > 0) {
+            if ( mora >= -1) {
                 factura.estado = 'Vencido';
             }
         } else if ( factura.estado === 'Pendiente' ) {
@@ -266,7 +266,7 @@ const actualizarEstado = async () => {
             
             const mora = await diffInDays(new Date(), fechaLimite)
         
-            if ( mora > 0) {
+            if ( mora >= -1) {
                 factura.estado = 'Vencido';
             } 
             
