@@ -156,6 +156,8 @@ const obtenerFacturas = async ( req, res) => {
                 factura.dataValues.otines = otines;
     
                 facturaFiltro.push(factura);
+            } else if ( factura.estado === 'No Existe' && !(idEmpresa > 0) ){
+                facturaFiltro.push(factura);
             }
 
         });
