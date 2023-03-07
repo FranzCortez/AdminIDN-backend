@@ -63,7 +63,41 @@ const mantencion = async (req, res, next) => {
     }
 }
 
+const reLogin = (req, res, next) => {
+
+    const authHeader = req.get('Authorization') || req.body?.headers?.Authorization ;
+
+    if(!authHeader) {
+        const error = new Error('No autenticado');
+        error.statusCode = 401;
+        throw error;
+    }
+
+    const token = authHeader.split(' ')[1];
+    let revisarToken;
+    try {
+        
+        revisarToken = jwt.verify(token, process.env.LLAVESECRETA);
+
+    } catch (error) {
+        error.statusCode = 500;
+        throw error;
+    }
+
+    if(!revisarToken) {
+        const error = new Error('No autenticado');
+        error.statusCode = 401;
+        throw error;
+    }
+    
+    return res.status(200).json({
+        revisarToken
+    });
+
+}
+
 export {
     auth,
-    mantencion
+    mantencion,
+    reLogin
 }
