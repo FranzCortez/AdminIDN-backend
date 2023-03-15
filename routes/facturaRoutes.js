@@ -1,5 +1,5 @@
 import express from "express";
-import { nuevaFactura, obtenerFacturas, actualizarFactura, notaCredito, pagarFactura, obtenerFactura, numeroFactura, cantFactura } from "../controllers/facturaController.js";
+import { nuevaFactura, obtenerFacturas, actualizarFactura, notaCredito, pagarFactura, obtenerFactura, numeroFactura, cantFactura, infoFact } from "../controllers/facturaController.js";
 import { auth } from "../middleware/auth.js";
 
 const router = express.Router();
@@ -27,5 +27,8 @@ router.get('/', auth, numeroFactura);
 
 // obtener cant de factura 
 router.get('/fact/cant', auth,cantFactura);
+
+// obtener informacion de una factura con su numero de factura
+router.get('/info/:nFactura', auth, infoFact)
 
 export default router;
