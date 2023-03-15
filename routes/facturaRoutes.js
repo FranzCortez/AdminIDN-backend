@@ -1,5 +1,5 @@
 import express from "express";
-import { nuevaFactura, obtenerFacturas, actualizarFactura, notaCredito, pagarFactura, obtenerFactura, numeroFactura } from "../controllers/facturaController.js";
+import { nuevaFactura, obtenerFacturas, actualizarFactura, notaCredito, pagarFactura, obtenerFactura, numeroFactura, cantFactura } from "../controllers/facturaController.js";
 import { auth } from "../middleware/auth.js";
 
 const router = express.Router();
@@ -8,7 +8,7 @@ const router = express.Router();
 router.post('/', auth , nuevaFactura);
 
 // Obtiene todas las facturas
-router.post('/filtro', auth, obtenerFacturas);
+router.post('/filtro/:offset', auth, obtenerFacturas);
 
 // Actualizar factura
 router.put('/:id', auth, actualizarFactura);
@@ -24,5 +24,8 @@ router.get('/:id', auth, obtenerFactura);
 
 // obtener numero de factura automatico
 router.get('/', auth, numeroFactura);
+
+// obtener cant de factura 
+router.get('/fact/cant', auth,cantFactura);
 
 export default router;

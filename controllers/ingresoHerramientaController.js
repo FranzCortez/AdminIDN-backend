@@ -114,6 +114,8 @@ const ingresosFiltroTodos = async (req, res, next) => {
     
     const { fecha, otin, nombre, marca, modelo, numeroInterno, numeroSerie, empresaId, tipoHerramientaId, activo } = req.body;
     
+    const offset = (parseInt(req.params.offset) || 0) * 20;
+
     let where = {}
     let include = [];
 
@@ -205,9 +207,13 @@ const ingresosFiltroTodos = async (req, res, next) => {
 
     const herramientas = await Herramienta.scope('filtro').findAll({ 
         where,
+        offset,
+        limit: 20,
         include,
         order: [['otin', 'ASC']]
     });
+
+    const cant = await Herramienta.scope('filtro').findAll({where});
 
     const archivos = await Archivos.scope('cotizacion').findAll();
     
@@ -222,8 +228,50 @@ const ingresosFiltroTodos = async (req, res, next) => {
         return herramienta;
     });
     
-    return res.status(200).json(herramientaFiltro);
+    return res.status(200).json({herramientaFiltro, cantPag: Math.ceil(cant.length / 20)});
 
+}
+
+// obtiene ingreso segun empresa id
+const ingresoIdEmpresa = async ( req, res ) => {
+
+    const { empresaId } = req.body;
+
+    const include = [];
+
+    if( empresaId !== '' && empresaId && empresaId !== '0' ) {
+        include.push({
+            model: ClienteContacto,
+            where: {
+                clienteEmpresaId: empresaId
+            },
+            attributes: ['nombre'],
+            include: {
+                model: ClienteEmpresa,
+                attributes: ['id', 'nombre']
+            }
+        });
+    } else {
+        include.push(
+            {
+                model: ClienteContacto,
+                attributes: ['nombre'],
+                include: {
+                    model: ClienteEmpresa,
+                    attributes: ['id', 'nombre']
+                }
+            }
+        );
+    }
+
+    await actualizarEstado();
+
+    const herramientas = await Herramienta.scope('filtro').findAll({ 
+        include,
+        order: [['otin', 'ASC']]
+    });
+
+    return res.status(200).json(herramientas);
 }
 
 // obtiene toda la info de 1 ingreso
@@ -364,5 +412,6 @@ export {
     editarInfo,
     subirArchivo,
     cotizacion,
-    obtenerArchivo
+    obtenerArchivo,
+    ingresoIdEmpresa
 }

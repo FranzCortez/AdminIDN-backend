@@ -66,6 +66,8 @@ const obtenerFacturas = async ( req, res) => {
         await actualizarEstado();
 
         const { idEmpresa, estado, numeroFactura, fechaFactura, mes, year } = req.body;
+
+        const offset = idEmpresa !== '' && idEmpresa && idEmpresa !== '0' ? 0 : (parseInt(req.params.offset) || 0) * 20;
         
         let where = {};
 
@@ -89,7 +91,9 @@ const obtenerFacturas = async ( req, res) => {
         
         let facturas = await Factura.findAll({ 
             where,
-            order: [[ 'numeroFactura', 'DESC' ]]
+            offset,
+            limit: idEmpresa !== '' && idEmpresa && idEmpresa !== '0' ? 100000 : 20,
+            order: [[ 'id', 'DESC' ]]
         });
 
         where = {};
@@ -129,7 +133,7 @@ const obtenerFacturas = async ( req, res) => {
                 }
             }
         });
-        
+
         const facturaFiltro = [];
 
         facturas.forEach((factura) => {
@@ -156,7 +160,7 @@ const obtenerFacturas = async ( req, res) => {
                 factura.dataValues.otines = otines;
     
                 facturaFiltro.push(factura);
-            } else if ( factura.estado === 'No Existe' && !(idEmpresa > 0) ){
+            } else if ( (factura.estado === 'No Existe' && !(idEmpresa > 0)) || factura.estado === 'Anulada'&& !(idEmpresa > 0) ){
                 facturaFiltro.push(factura);
             }
 
@@ -275,6 +279,7 @@ const actualizarEstado = async () => {
         await factura.save();
     });
 
+    return;
 }
 
 function addDaysToDate(date, days){
@@ -308,7 +313,7 @@ const notaCredito = async (req, res) => {
 
     await factura.save();
 
-    res.status(200).json({ msg: 'Factura anulada correctamente' });
+    return res.status(200).json({ msg: 'Factura anulada correctamente' });
 }
 
 // pagar una factura
@@ -333,43 +338,49 @@ const pagarFactura = async (req, res) => {
 // obtiene una factura en especifico
 const obtenerFactura = async ( req, res) => {
 
-    const { id } = req.params;
-
-    const factura = await Factura.findByPk(id);
-
-    // traer todos los ingresos asociados a 1 factura
-    const herramientas = await Herramienta.scope('factura').findAll({
-        where: { 
-            facturaId: factura.id 
-        },
-        include: {
-            model: ClienteContacto,
-            attributes: ['nombre', 'clienteEmpresaId'],
-            include: {
-                model: ClienteEmpresa,
-                attributes: ['id', 'nombre']
-            }
-        }
-    });
-    
-    let otines = '';
+    try {
         
-    const iguales = herramientas.filter(herramienta =>{
+        const { id } = req.params;
 
-        if ( otines === '' ) {
-            otines = herramienta.otin;
-        } else {
-            otines = otines + ", " + herramienta.otin;
-        }
+        const factura = await Factura.findByPk(id);
 
-        return herramienta;
-    });
+        // traer todos los ingresos asociados a 1 factura
+        const herramientas = await Herramienta.scope('factura').findAll({
+            where: { 
+                facturaId: factura.id 
+            },
+            include: {
+                model: ClienteContacto,
+                attributes: ['nombre', 'clienteEmpresaId'],
+                include: {
+                    model: ClienteEmpresa,
+                    attributes: ['id', 'nombre']
+                }
+            }
+        });
+        
+        let otines = '';
+            
+        const iguales = herramientas.filter(herramienta =>{
 
-    factura.dataValues.herramientas = iguales;
-    factura.dataValues.otines = otines;
-    factura.dataValues.empresaId = factura.dataValues.herramientas[0].clienteContacto.clienteEmpresaId;
+            if ( otines === '' ) {
+                otines = herramienta.otin;
+            } else {
+                otines = otines + ", " + herramienta.otin;
+            }
 
-    return res.status(200).json(factura);
+            return herramienta;
+        });
+
+        factura.dataValues.herramientas = iguales;
+        factura.dataValues.otines = otines;
+        factura.dataValues.empresaId = factura.dataValues.herramientas[0].clienteContacto.clienteEmpresaId;
+
+        return res.status(200).json(factura);
+
+    } catch (error) {
+        return res.status(404);
+    }
 
 }
 
@@ -384,6 +395,18 @@ const numeroFactura = async (req, res) => {
 
 }
 
+const cantFactura = async (req, res) => {
+    
+    try {
+        const cant = await Factura.findAll({});
+        
+        return res.status(200).json({cantPag: Math.ceil(cant.length / 20)});
+    } catch (error) {
+        return res.status(404).json({msg: 'ERROR'});
+    }
+
+}
+
 export {
     nuevaFactura,
     obtenerFacturas,
@@ -392,5 +415,6 @@ export {
     pagarFactura,
     obtenerFactura,
     actualizarEstado,
-    numeroFactura
+    numeroFactura,
+    cantFactura
 }

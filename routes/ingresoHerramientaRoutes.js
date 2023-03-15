@@ -1,5 +1,5 @@
 import express from "express";
-import { nuevoIngresoHerramienta, ingresosFiltroTodos, ingresoInfo, editarInfo, subirArchivo, cotizacion, obtenerArchivo } from "../controllers/ingresoHerramientaController.js";
+import { nuevoIngresoHerramienta, ingresosFiltroTodos, ingresoInfo, editarInfo, subirArchivo, cotizacion, obtenerArchivo, ingresoIdEmpresa } from "../controllers/ingresoHerramientaController.js";
 import { subirFoto, nuevoArchivoFoto, obtenerFoto, eliminarFotos, fotoBase } from "../controllers/fotoGaleriaController.js";
 import { subirInforme, guardarInforme, obtenerInforme, guardarDatosInforme, obtenerDatosInforme, obtenerConclusionInforme } from "../controllers/informeController.js";
 import { subirCertificado, guardarCertificado, obtenerCertificado } from "../controllers/certificadoController.js";
@@ -11,7 +11,10 @@ const router = express.Router();
 router.post('/ingreso',auth , nuevoIngresoHerramienta);
 
 // se obtiene los ingresos segun los filtros
-router.post('/ingreso/obtener',auth , ingresosFiltroTodos);
+router.post('/ingreso/obtener/:offset',auth , ingresosFiltroTodos);
+
+// obtener ingreso segun empresID
+router.post('/ingreso/empresa', auth, ingresoIdEmpresa);
 
 // se obtiene 1 ingreso
 router.get('/ingreso/:id',auth , ingresoInfo);
