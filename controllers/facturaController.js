@@ -407,6 +407,19 @@ const cantFactura = async (req, res) => {
 
 }
 
+const infoFact = async (req, res) => {
+
+    try {
+        const factura = await Factura.findOne({ where: { numeroFactura: req.params.nFactura } })
+
+        return res.status(200).json(factura);
+
+    } catch (error) {
+        return res.status(404);
+    }
+
+}
+
 export {
     nuevaFactura,
     obtenerFacturas,
@@ -416,5 +429,6 @@ export {
     obtenerFactura,
     actualizarEstado,
     numeroFactura,
-    cantFactura
+    cantFactura,
+    infoFact
 }
