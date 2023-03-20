@@ -210,7 +210,7 @@ const ingresosFiltroTodos = async (req, res, next) => {
         offset,
         limit: 20,
         include,
-        order: [['otin', 'ASC']]
+        order: [['otin', 'DESC']]
     });
 
     const cant = await Herramienta.scope('filtro').findAll({where});
