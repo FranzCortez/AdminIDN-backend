@@ -420,6 +420,99 @@ const infoFact = async (req, res) => {
 
 }
 
+const boletaAutomatica = async (req, res) => {
+
+    try {
+        
+        const { empresa, estado } = req.body;
+
+        let where = {};
+        
+        if ( estado === 0 || estado === '0' ) {
+            where.estado = {
+                [Op.eq] : 'Vencido'
+            }
+        } else if ( estado === '1' ) {
+            where.estado = {
+                [Op.eq] : 'Pendiente'
+            }
+        } else {
+            where = {
+                [Op.or]: [
+                    { estado: 'Pendiente' },
+                    { estado: 'Vencido' }
+                ]
+            }
+        }
+
+        const facturas = await Factura.findAll({ 
+            where,
+            order: [[ 'id', 'DESC' ]]
+        });
+
+        where = {};
+
+        if ( empresa !== '' && empresa && empresa !== '0' ) {
+            
+            where.clienteEmpresaId = {
+                [Op.eq] : empresa
+            }
+
+        }
+
+        // traer todos los ingresos asociados a 1 factura
+        const herramientas = await Herramienta.scope('factura').findAll({
+            where: { 
+                facturaId: { [Op.not]: null } 
+            },
+            include: {
+                model: ClienteContacto,
+                where,
+                attributes: ['nombre', 'clienteEmpresaId'],
+                include: {
+                    model: ClienteEmpresa,                    
+                    attributes: ['id', 'nombre']
+                }
+            }
+        });
+
+        const facturaFiltro = [];
+
+        facturas.forEach((factura) => {
+
+            let otines = '';
+            
+            const iguales = herramientas.filter(herramienta =>{
+
+                if ( herramienta.facturaId === factura.id ) {
+                    
+                    if ( otines === '' ) {
+                        otines = herramienta.otin;
+                    } else {
+                        otines = otines + ", " + herramienta.otin;
+                    }
+
+                    return herramienta;
+                }
+
+            });
+
+            if( iguales.length > 0 ) {
+                factura.dataValues.herramientas = iguales;
+                factura.dataValues.otines = otines;
+    
+                facturaFiltro.push(factura);
+            }
+
+        });
+
+        return res.status(200).json(facturaFiltro);
+
+    } catch (error) {
+        return res.status(404).json({ msg: 'Error!'});
+    }
+}
+
 export {
     nuevaFactura,
     obtenerFacturas,
@@ -430,5 +523,6 @@ export {
     actualizarEstado,
     numeroFactura,
     cantFactura,
-    infoFact
+    infoFact,
+    boletaAutomatica
 }
