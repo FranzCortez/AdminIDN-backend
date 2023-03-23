@@ -3,6 +3,7 @@ import Herramienta from "../models/Herramienta.js";
 import ClienteContacto from "../models/ClienteContacto.js";
 import ClienteEmpresa from "../models/ClienteEmpresa.js";
 import TipoHerramienta from "../models/TipoHerramienta.js";
+import Preinforme from "../models/Preinforme.js";
 import Factura from "../models/Factura.js";
 import Archivos from "../models/Archivos.js";
 import Sequelize from "sequelize";
@@ -76,7 +77,7 @@ const nuevoIngresoHerramienta = async (req, res, next) => {
             otin = (parseInt(ultimoIngreso[0].otin.split("-")[0]) + 1) + '-' + new Date().getFullYear();
         }
 
-        await Herramienta.create({
+        const herramienta = await Herramienta.create({
             otin,
             nombre,
             marca,
@@ -98,8 +99,10 @@ const nuevoIngresoHerramienta = async (req, res, next) => {
                 throw err;
             }
         });
+
+        console.log(herramienta.dataValues.id);
     
-        return res.status(200).json({ msg: `Ingreso y herramienta: ${nombre} creada correctamente con otin: ${otin}` });
+        return res.status(200).json({ msg: `Ingreso y herramienta: ${nombre} creada correctamente con otin: ${otin}`, herramientumId: herramienta.dataValues.id });
 
     } catch (error) {
         console.log(error);
@@ -405,6 +408,90 @@ const obtenerArchivo = async (req, res, next) => {
     return res.status(200).json(ruta);
 }
 
+// guardar preinforme
+const guardarPreinforme = async (req, res) => {
+
+    const { tecnico, falla, herramientumId } = req.body;
+    
+    if ( !tecnico || !falla || !herramientumId ){
+        return res.status(404).json({ msg: 'Error al guardar Preinforme' });
+    }
+
+    await Preinforme.create({
+        falla,
+        tecnico,
+        herramientumId
+    });
+
+    return res.status(200).json({ msg: 'Preinforme guardado' });
+
+}
+
+// obtener preinforme
+const obtenerPreinforme = async (req, res) => {
+
+    const { id } = req.params;
+    
+    if ( !id ) {
+        return res.status(404).json({ msg: 'Error no existe preinforme' });
+    }
+
+    const preinforme = await Preinforme.findOne({ where: { herramientumId: id } });
+
+    return res.status(200).json(preinforme);
+}
+
+// obtener falla
+const obtenerFallaPreinforme = async (req, res) => {
+
+    const { id } = req.params;
+
+    if ( !id ) {
+        return res.status(404).json({ msg: 'Error' });
+    }
+
+    const preinforme = await Preinforme.scope('falla').findOne({ where: { herramientumId: id } });
+    
+
+    return res.status(200).json(preinforme);
+}
+
+// obtener tecnico
+const obtenerTecnicoPreinforme = async (req, res) => {
+
+    const { id } = req.params;
+
+    if ( !id ) {
+        return res.status(404).json({ msg: 'Error' });
+    }
+
+    const preinforme = await Preinforme.scope('tecnico').findOne({ where: { herramientumId: id } });
+    
+
+    return res.status(200).json(preinforme);
+}
+
+// actualizar preinforme
+const actualizarPreinforme = async (req, res) => {
+
+    const { id } = req.params;
+
+    if ( !id ) {
+        return res.status(404).json({ msg: 'Error' });
+    }
+
+    const preinforme = await Preinforme.findOne({ where: { herramientumId: id } });
+
+    const { falla, tecnico } = req.body;
+
+    preinforme.falla = falla != preinforme.falla ? falla : preinforme.falla;
+    preinforme.tecnico = tecnico != preinforme.tecnico ? tecnico : preinforme.tecnico;
+
+    await preinforme.save();
+
+    return res.status(200).json({ msg: 'Cambio realizado' });
+}
+
 export {
     nuevoIngresoHerramienta,
     ingresosFiltroTodos,
@@ -413,5 +500,10 @@ export {
     subirArchivo,
     cotizacion,
     obtenerArchivo,
-    ingresoIdEmpresa
+    ingresoIdEmpresa,
+    guardarPreinforme,
+    obtenerPreinforme,
+    obtenerFallaPreinforme,
+    obtenerTecnicoPreinforme,
+    actualizarPreinforme
 }

@@ -1,5 +1,5 @@
 import express from "express";
-import { nuevoIngresoHerramienta, ingresosFiltroTodos, ingresoInfo, editarInfo, subirArchivo, cotizacion, obtenerArchivo, ingresoIdEmpresa } from "../controllers/ingresoHerramientaController.js";
+import { nuevoIngresoHerramienta, ingresosFiltroTodos, ingresoInfo, editarInfo, subirArchivo, cotizacion, obtenerArchivo, ingresoIdEmpresa, guardarPreinforme, obtenerFallaPreinforme, obtenerTecnicoPreinforme, actualizarPreinforme, obtenerPreinforme } from "../controllers/ingresoHerramientaController.js";
 import { subirFoto, nuevoArchivoFoto, obtenerFoto, eliminarFotos, fotoBase } from "../controllers/fotoGaleriaController.js";
 import { subirInforme, guardarInforme, obtenerInforme, guardarDatosInforme, obtenerDatosInforme, obtenerConclusionInforme } from "../controllers/informeController.js";
 import { subirCertificado, guardarCertificado, obtenerCertificado } from "../controllers/certificadoController.js";
@@ -63,5 +63,20 @@ router.get('/info/:id', auth, obtenerDatosInforme);
 
 //obtener conclusion de informe
 router.get('/info/conclu/:id', auth, obtenerConclusionInforme);
+
+// guardar preinforme
+router.post('/preinforme', auth, guardarPreinforme);
+
+// obtener preinforme
+router.get('/preinforme/:id', auth, obtenerPreinforme);
+
+// obtener falla preinforme
+router.get('/preinforme/falla/:id', auth, obtenerFallaPreinforme);
+
+// obtener falla preinforme
+router.get('/preinforme/tecnico/:id', auth, obtenerTecnicoPreinforme);
+
+// obtener falla preinforme
+router.put('/preinforme/actualizar/:id', auth, actualizarPreinforme);
 
 export default router;
