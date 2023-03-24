@@ -347,8 +347,9 @@ const editarInfo = async ( req, res, next ) => {
         return next();
     }
 
-    const { comentario, nombre, marca, modelo, numeroInterno, numeroGuiaCliente, tipoHerramientaId, clienteContactoId, fecha, numeroSerie, guiaDespacho, fechaGuiaDespacho } = req.body;
+    const { comentario, nombre, marca, modelo, numeroInterno, numeroGuiaCliente, tipoHerramientaId, clienteContactoId, fecha, numeroSerie, guiaDespacho, fechaGuiaDespacho, otin } = req.body;
 
+    ingreso.otin = otin;
     ingreso.comentario = comentario;
     ingreso.nombre = nombre;
     ingreso.marca = marca;
