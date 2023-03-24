@@ -49,16 +49,8 @@ const subirArchivo = async (req, res, next) => {
 
 // ----------------------------
 
-// crea un nuevo ingreso y herramienta
-const nuevoIngresoHerramienta = async (req, res, next) => {
-    
-    const { nombre, marca, comentario, modelo, numeroInterno, numeroGuiaCliente, tipoHerramientaId, clienteContactoId, fecha, numeroSerie, guiaDespacho, fechaGuiaDespacho } = req.body;
-
-    if( !nombre, !marca, !modelo ) {
-        res.status(400).json({ msg: 'Todos los campos son necesarios'});
-        return next();
-    }
-
+// obtener otin
+const obtenerOtin = async ( req, res ) => {
     try {
 
         const ultimoIngreso = await Herramienta.scope('otin').findAll({
@@ -76,6 +68,25 @@ const nuevoIngresoHerramienta = async (req, res, next) => {
         } else {
             otin = (parseInt(ultimoIngreso[0].otin.split("-")[0]) + 1) + '-' + new Date().getFullYear();
         }
+
+        return res.status(200).json(otin);
+
+    } catch (error) {
+        return res.status(404).json({ msg: 'Error al tomar una OTIN' });
+    }
+}
+
+// crea un nuevo ingreso y herramienta
+const nuevoIngresoHerramienta = async (req, res, next) => {
+    
+    const { nombre, marca, comentario, modelo, numeroInterno, numeroGuiaCliente, tipoHerramientaId, clienteContactoId, fecha, numeroSerie, guiaDespacho, fechaGuiaDespacho, otin } = req.body;
+
+    if( !nombre, !marca, !modelo ) {
+        res.status(400).json({ msg: 'Todos los campos son necesarios'});
+        return next();
+    }
+
+    try {
 
         const herramienta = await Herramienta.create({
             otin,
@@ -493,6 +504,7 @@ const actualizarPreinforme = async (req, res) => {
 }
 
 export {
+    obtenerOtin,
     nuevoIngresoHerramienta,
     ingresosFiltroTodos,
     ingresoInfo,

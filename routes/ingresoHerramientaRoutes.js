@@ -1,11 +1,14 @@
 import express from "express";
-import { nuevoIngresoHerramienta, ingresosFiltroTodos, ingresoInfo, editarInfo, subirArchivo, cotizacion, obtenerArchivo, ingresoIdEmpresa, guardarPreinforme, obtenerFallaPreinforme, obtenerTecnicoPreinforme, actualizarPreinforme, obtenerPreinforme } from "../controllers/ingresoHerramientaController.js";
+import { obtenerOtin, nuevoIngresoHerramienta, ingresosFiltroTodos, ingresoInfo, editarInfo, subirArchivo, cotizacion, obtenerArchivo, ingresoIdEmpresa, guardarPreinforme, obtenerFallaPreinforme, obtenerTecnicoPreinforme, actualizarPreinforme, obtenerPreinforme } from "../controllers/ingresoHerramientaController.js";
 import { subirFoto, nuevoArchivoFoto, obtenerFoto, eliminarFotos, fotoBase } from "../controllers/fotoGaleriaController.js";
 import { subirInforme, guardarInforme, obtenerInforme, guardarDatosInforme, obtenerDatosInforme, obtenerConclusionInforme } from "../controllers/informeController.js";
 import { subirCertificado, guardarCertificado, obtenerCertificado } from "../controllers/certificadoController.js";
 import { auth, mantencion } from "../middleware/auth.js";
 
 const router = express.Router();
+
+// obtener OTIN
+router.get('/otin', auth, obtenerOtin);
 
 // se ingresa un nuevo ingreso
 router.post('/ingreso',auth , nuevoIngresoHerramienta);
