@@ -126,6 +126,8 @@ const nuevoIngresoHerramienta = async (req, res, next) => {
 // filtro por otin(text), nombre(text), marca(text), modelo(text), numero interno(text), fecha ingreso(selected), nombre cliente(selected), numero serie(text), tipo herramienta(selected)
 const ingresosFiltroTodos = async (req, res, next) => {
     
+    await eliminarDuplicado();
+
     const { fecha, otin, nombre, marca, modelo, numeroInterno, numeroSerie, empresaId, tipoHerramientaId, activo } = req.body;
     
     const offset = (parseInt(req.params.offset) || 0) * 20;
@@ -368,6 +370,31 @@ const editarInfo = async ( req, res, next ) => {
     return res.status(200).json(`Herramineta e Ingreso de: ${ingreso.nombre}, actualizado correctamente`);
 }
 
+const eliminarDuplicado = async ( req, res ) => {
+
+    const ingresos = await Herramienta.scope('otin').findAll({});
+
+    const duplicado = [];
+    const otines = [];
+
+    ingresos.forEach(ingreso => {
+        
+        const existe = ingresos.find( data => ingreso.otin === data.otin && ingreso.id !== data.id );
+        
+        if ( existe ) {
+            const repetido = otines.find( otin => otin.otin === existe.otin );
+
+            if ( !repetido ) {
+                duplicado.push(existe.id);
+                otines.push(existe);
+            }
+        }
+    });
+
+    await Herramienta.destroy({ where: { id: duplicado } });
+
+}
+
 // guarda una la ruta del archivo en la base de datos
 const cotizacion = async (req, res, next) => {
 
@@ -492,12 +519,24 @@ const actualizarPreinforme = async (req, res) => {
         return res.status(404).json({ msg: 'Error' });
     }
 
-    const preinforme = await Preinforme.findOne({ where: { herramientumId: id } });
-
     const { falla, tecnico } = req.body;
 
-    preinforme.falla = falla != preinforme.falla ? falla : preinforme.falla;
-    preinforme.tecnico = tecnico != preinforme.tecnico ? tecnico : preinforme.tecnico;
+    const preinforme = await Preinforme.findOne({ where: { herramientumId: id } });
+
+    if ( !preinforme ) {
+
+        await Preinforme.create({
+            falla,
+            tecnico,
+            herramientumId: id
+        });
+
+        return res.status(200).json({ msg: 'Cambio realizado' });
+    }
+
+
+    preinforme.falla = falla != preinforme?.falla ? falla : preinforme.falla;
+    preinforme.tecnico = tecnico != preinforme?.tecnico ? tecnico : preinforme.tecnico;
 
     await preinforme.save();
 
