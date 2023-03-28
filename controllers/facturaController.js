@@ -513,6 +513,34 @@ const boletaAutomatica = async (req, res) => {
     }
 }
 
+const marcarPagadas = async (req, res) => {
+
+    try {
+        
+        const facturas = await Factura.findAll({
+            where: {
+                id: {
+                    [Op.or]: req.body
+                }
+            }
+        });
+
+
+        facturas.forEach(async factura => {
+
+            factura.boletaPagado = true;
+            await factura.save();
+        });
+
+        return res.status(200).json({ msg: 'Boleta de pago generada' });
+
+    } catch (error) {
+        console.log(error)
+        return res.status(404).json({ msg: 'No se pudo generar el comprobante de pago' });
+    }
+
+}
+
 export {
     nuevaFactura,
     obtenerFacturas,
@@ -524,5 +552,6 @@ export {
     numeroFactura,
     cantFactura,
     infoFact,
-    boletaAutomatica
+    boletaAutomatica,
+    marcarPagadas
 }

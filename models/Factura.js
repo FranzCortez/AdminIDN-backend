@@ -47,6 +47,10 @@ const Factura = db.define('factura', {
     },
     numeroNotaCredito: {
         type: DataTypes.STRING,
+    },
+    boletaPagado: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false
     }
 }, {
     timestamps: false
