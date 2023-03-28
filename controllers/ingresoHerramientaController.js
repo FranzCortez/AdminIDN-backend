@@ -110,8 +110,6 @@ const nuevoIngresoHerramienta = async (req, res, next) => {
                 throw err;
             }
         });
-
-        console.log(herramienta.dataValues.id);
     
         return res.status(200).json({ msg: `Ingreso y herramienta: ${nombre} creada correctamente con otin: ${otin}`, herramientumId: herramienta.dataValues.id });
 
@@ -452,10 +450,9 @@ const guardarPreinforme = async (req, res) => {
 
     const { tecnico, falla, herramientumId } = req.body;
     
-    if ( !tecnico || !falla || !herramientumId ){
+    if ( !tecnico || !herramientumId ){
         return res.status(404).json({ msg: 'Error al guardar Preinforme' });
     }
-
     await Preinforme.create({
         falla,
         tecnico,
