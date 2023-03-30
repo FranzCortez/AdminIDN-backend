@@ -119,10 +119,14 @@ const obtenerFacturas = async ( req, res) => {
 
         }
 
+        const id = [];
+
+        facturas.forEach(factura => id.push(factura.id));
+
         // traer todos los ingresos asociados a 1 factura
         const herramientas = await Herramienta.scope('factura').findAll({
             where: { 
-                facturaId: { [Op.not]: null } 
+                facturaId: { [Op.or]: id } 
             },
             include: {
                 model: ClienteContacto,
@@ -461,10 +465,16 @@ const boletaAutomatica = async (req, res) => {
 
         }
 
+        const id = [];
+
+        facturas.forEach( factura => id.push(factura.id) );
+
         // traer todos los ingresos asociados a 1 factura
         const herramientas = await Herramienta.scope('factura').findAll({
             where: { 
-                facturaId: { [Op.not]: null } 
+                facturaId: {
+                    [Op.or]: id
+                }
             },
             include: {
                 model: ClienteContacto,
