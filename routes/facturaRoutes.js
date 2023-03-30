@@ -1,5 +1,5 @@
 import express from "express";
-import { nuevaFactura, obtenerFacturas, actualizarFactura, notaCredito, pagarFactura, obtenerFactura, numeroFactura, cantFactura, infoFact, boletaAutomatica, marcarPagadas, obtenerFacturaMesAño } from "../controllers/facturaController.js";
+import { nuevaFactura, obtenerFacturas, actualizarFactura, notaCredito, pagarFactura, obtenerFactura, numeroFactura, cantFactura, infoFact, boletaAutomatica, marcarPagadas, obtenerFacturaMesAño, obtenerIngresoMesAño } from "../controllers/facturaController.js";
 import { auth } from "../middleware/auth.js";
 
 const router = express.Router();
@@ -38,6 +38,9 @@ router.post('/boleta/facturar', auth, boletaAutomatica);
 router.post('/boleta/pago', auth, marcarPagadas);
 
 // obtener factura mes y año
-router.post('/balance', auth, obtenerFacturaMesAño);
+router.post('/balance/factura/mes', auth, obtenerFacturaMesAño);
+
+// obtener ingreso mes y año
+router.post('/balance/ingreso/mes', auth, obtenerIngresoMesAño);
 
 export default router;
