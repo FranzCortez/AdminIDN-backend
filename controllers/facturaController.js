@@ -4,6 +4,7 @@ import ClienteContacto from "../models/ClienteContacto.js";
 import ClienteEmpresa from "../models/ClienteEmpresa.js";
 import Sequelize from "sequelize";
 const Op = Sequelize.Op;
+const fn = Sequelize.fn;
 
 
 // Crea una nueva factura, agregando la id de factura a una(s) herramienta(s)
@@ -541,6 +542,86 @@ const marcarPagadas = async (req, res) => {
 
 }
 
+// obtener facturas por mes y año
+const obtenerFacturaMesAño = async (req, res) => {
+
+    try {
+
+        const { mes, año } = req.body;
+
+        const facturas = await Factura.findAll({ 
+            where: {
+                [Op.and]: [
+                    Sequelize.where(Sequelize.fn('MONTH', Sequelize.col('fechaFactura')), mes),
+                    Sequelize.where(Sequelize.fn('YEAR', Sequelize.col('fechaFactura')), año),
+                ],
+            },
+            attributes: ['id', 'fechaFactura', 'monto', 'numeroFactura']
+        });
+
+        if ( facturas.length === 0 ) {
+            return res.status(200).json(facturas);
+        }
+
+        const id = [];
+        
+        facturas.forEach(factura => id.push(factura.id));
+
+        const herramientas = await Herramienta.findAll({
+            where: {
+                facturaId: {
+                    [Op.or]: id
+                }
+            },
+            attributes: ['id', 'otin', 'clienteContactoId', 'facturaId'],
+            include: {
+                model: ClienteContacto,
+                attributes: ['nombre', 'clienteEmpresaId'],
+                include: {
+                    model: ClienteEmpresa,                    
+                    attributes: ['id', 'nombre']
+                }
+            }
+        });
+        
+        const datos = [];
+
+        facturas.forEach((factura) => {
+
+            let otines = '';
+            
+            const iguales = herramientas.filter(herramienta =>{
+
+                if ( herramienta.facturaId === factura.id ) {
+                    
+                    if ( otines === '' ) {
+                        otines = herramienta.otin;
+                    } else {
+                        otines = otines + ", " + herramienta.otin;
+                    }
+
+                    return herramienta;
+                }
+
+            });
+
+            if( iguales.length > 0 ) {
+                factura.dataValues.herramientas = iguales;
+                factura.dataValues.otines = otines;
+    
+                datos.push(factura);
+            }
+
+        });
+        
+        return res.status(200).json(datos);
+        
+    } catch (error) {
+        console.log(error);
+        return res.status(400).json( { msg: 'No se encontro factura en el mes' } );
+    }
+}
+
 export {
     nuevaFactura,
     obtenerFacturas,
@@ -553,5 +634,6 @@ export {
     cantFactura,
     infoFact,
     boletaAutomatica,
-    marcarPagadas
+    marcarPagadas,
+    obtenerFacturaMesAño
 }
