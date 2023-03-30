@@ -53,6 +53,10 @@ const Herramienta = db.define('herramienta', {
         type: DataTypes.BOOLEAN,
         allowNull: false,
         defaultValue: true
+    },
+    usuario: {
+        type: DataTypes.STRING,
+        allowNull: true
     }
 }, {
     timestamps: false,
