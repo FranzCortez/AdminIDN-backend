@@ -133,9 +133,9 @@ const guardarDatosInforme = async (req, res) => {
         falla,
         cuadroA : JSON.stringify(cuadroA),
         cuadroB : JSON.stringify(cuadroB),
-        fallaText : fallaText.join('\n'),
-        conclusion : conclusion.join('\n'),
-        recomendacion : recomendacion.join('\n'),
+        fallaText : fallaText?.join('\n'),
+        conclusion : conclusion?.join('\n'),
+        recomendacion : recomendacion?.join('\n'),
         herramientumId: id
     });
 
