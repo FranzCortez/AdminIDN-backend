@@ -108,9 +108,9 @@ const guardarDatosInforme = async (req, res) => {
         info.falla = falla;
         info.cuadroA = JSON.stringify(cuadroA);
         info.cuadroB = JSON.stringify(cuadroB);
-        info.fallaText = fallaText.join('\n');
-        info.conclusion = conclusion.join('\n');
-        info.recomendacion = recomendacion.join('\n');
+        info.fallaText = fallaText?.join('\n');
+        info.conclusion = conclusion?.join('\n');
+        info.recomendacion = recomendacion?.join('\n');
 
         await info.save();
 
