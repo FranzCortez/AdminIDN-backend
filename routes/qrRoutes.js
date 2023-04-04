@@ -1,5 +1,5 @@
 import expres from "express";
-import { generarQr, obtenerFecha, actualizarFecha } from "../controllers/qrController.js";
+import { generarQr, obtenerFecha, actualizarFecha, obtenerInfo } from "../controllers/qrController.js";
 
 import { auth } from "../middleware/auth.js";
 
@@ -13,5 +13,8 @@ router.get('/:id', auth, obtenerFecha);
 
 // actualiza la fecha del qr (mantencion)
 router.put('/:id', auth, actualizarFecha);
+
+// obtiene info
+router.get('/info/:id', auth, obtenerInfo);
 
 export default router;

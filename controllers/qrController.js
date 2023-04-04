@@ -84,8 +84,31 @@ const actualizarFecha = async (req, res) => {
     return res.status(200).json({ msg: "Actualizado correctamente"});
 }
 
+// obtiene info para imprimir qr de nuevo
+const obtenerInfo = async ( req, res) => {
+
+    try {
+        
+        const { id } = req.params;
+
+        const qr = await Qr.findOne({ where: { herramientumId: id }});
+
+        const herramienta = await Herramienta.scope('otin').findByPk(qr.herramientumId);
+
+        qr.dataValues.otin = herramienta.otin;
+
+        return res.status(200).json(qr);
+
+    } catch (error) {
+        console.log(error);
+        return res.status(400).json({ msg: 'Error al encontrar Qr' });
+    }
+
+}
+
 export {
     generarQr,
     obtenerFecha,
-    actualizarFecha
+    actualizarFecha,
+    obtenerInfo
 }
