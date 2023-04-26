@@ -3,6 +3,7 @@ import Herramienta from "../models/Herramienta.js";
 import ClienteContacto from "../models/ClienteContacto.js";
 import ClienteEmpresa from "../models/ClienteEmpresa.js";
 import Sequelize from "sequelize";
+import TipoHerramienta from "../models/TipoHerramienta.js";
 const Op = Sequelize.Op;
 const fn = Sequelize.fn;
 
@@ -128,15 +129,21 @@ const obtenerFacturas = async ( req, res) => {
             where: { 
                 facturaId: { [Op.or]: id } 
             },
-            include: {
-                model: ClienteContacto,
-                where,
-                attributes: ['nombre', 'clienteEmpresaId'],
-                include: {
-                    model: ClienteEmpresa,                    
-                    attributes: ['id', 'nombre']
+            include: [
+                {
+                    model: ClienteContacto,
+                    where,
+                    attributes: ['nombre', 'clienteEmpresaId', 'correo', 'telefono'],
+                    include: {
+                        model: ClienteEmpresa,                    
+                        attributes: ['id', 'nombre']
+                    }
+                },
+                {
+                    model: TipoHerramienta,
+                    attributes: ['nombre']
                 }
-            }
+            ]
         });
 
         const facturaFiltro = [];
@@ -144,6 +151,7 @@ const obtenerFacturas = async ( req, res) => {
         facturas.forEach((factura) => {
 
             let otines = '';
+            const infoOtin = [];
             
             const iguales = herramientas.filter(herramienta =>{
 
@@ -155,6 +163,8 @@ const obtenerFacturas = async ( req, res) => {
                         otines = otines + ", " + herramienta.otin;
                     }
 
+                    infoOtin.push(herramienta);
+
                     return herramienta;
                 }
 
@@ -163,6 +173,7 @@ const obtenerFacturas = async ( req, res) => {
             if( iguales.length > 0 ) {
                 factura.dataValues.herramientas = iguales;
                 factura.dataValues.otines = otines;
+                factura.dataValues.infoOtines = infoOtin;
     
                 facturaFiltro.push(factura);
             } else if ( (factura.estado === 'No Existe' && !(idEmpresa > 0)) || factura.estado === 'Anulada'&& !(idEmpresa > 0) ){
