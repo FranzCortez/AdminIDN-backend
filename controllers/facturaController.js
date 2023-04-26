@@ -94,7 +94,7 @@ const obtenerFacturas = async ( req, res) => {
             where,
             offset,
             limit: idEmpresa !== '' && idEmpresa && idEmpresa !== '0' ? 100000 : 20,
-            order: [[ 'id', 'DESC' ]]
+            order: [[ 'numeroFactura', 'DESC' ]]
         });
 
         where = {};
