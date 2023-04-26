@@ -73,7 +73,7 @@ const Herramienta = db.define('herramienta', {
         },
         factura: {
             attributes: {
-                exclude: ['descripcion', 'comentario', 'numeroGuiaCliente', 'nombre', 'marca', 'modelo', 'numeroInterno', 'tipoHerramientumId', 'fecha', 'numeroSerie']
+                exclude: ['descripcion', 'comentario', 'tipoHerramientumId']
             }
         }
     }
