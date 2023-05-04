@@ -541,6 +541,40 @@ const actualizarPreinforme = async (req, res) => {
     return res.status(200).json({ msg: 'Cambio realizado' });
 }
 
+// obtener ingresos de herramienta por mes
+const obtenerIngresoMes = async (req, res) => {
+
+    try {
+
+        const { mes, año } = req.body;
+
+        const ingresos = await Herramienta.findAll({ 
+            where: {
+                [Op.and]: [
+                    Sequelize.where(Sequelize.fn('MONTH', Sequelize.col('fecha')), mes),
+                    Sequelize.where(Sequelize.fn('YEAR', Sequelize.col('fecha')), año),
+                ],
+            },
+            attributes: ['id', 'otin', 'nombre', 'fecha'],
+            include: {
+                model: ClienteContacto,
+                attributes: ['nombre', 'clienteEmpresaId'],
+                include: {
+                    model: ClienteEmpresa,                    
+                    attributes: ['id', 'nombre']
+                }
+            }
+        });
+        
+        return res.status(200).json(ingresos);
+
+    } catch (error) {
+        console.log(error);
+        return res.status(404).json({msg: 'Error al obtener ingresos por mes'});
+    }
+
+}
+
 export {
     obtenerOtin,
     nuevoIngresoHerramienta,
@@ -555,5 +589,6 @@ export {
     obtenerPreinforme,
     obtenerFallaPreinforme,
     obtenerTecnicoPreinforme,
-    actualizarPreinforme
+    actualizarPreinforme,
+    obtenerIngresoMes,
 }
