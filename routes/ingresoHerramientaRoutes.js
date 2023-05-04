@@ -1,5 +1,5 @@
 import express from "express";
-import { obtenerOtin, nuevoIngresoHerramienta, ingresosFiltroTodos, ingresoInfo, editarInfo, subirArchivo, cotizacion, obtenerArchivo, ingresoIdEmpresa, guardarPreinforme, obtenerFallaPreinforme, obtenerTecnicoPreinforme, actualizarPreinforme, obtenerPreinforme } from "../controllers/ingresoHerramientaController.js";
+import { obtenerOtin, nuevoIngresoHerramienta, ingresosFiltroTodos, ingresoInfo, editarInfo, subirArchivo, cotizacion, obtenerArchivo, ingresoIdEmpresa, guardarPreinforme, obtenerFallaPreinforme, obtenerTecnicoPreinforme, actualizarPreinforme, obtenerPreinforme, obtenerIngresoMes } from "../controllers/ingresoHerramientaController.js";
 import { subirFoto, nuevoArchivoFoto, obtenerFoto, eliminarFotos, fotoBase } from "../controllers/fotoGaleriaController.js";
 import { subirInforme, guardarInforme, obtenerInforme, guardarDatosInforme, obtenerDatosInforme, obtenerConclusionInforme } from "../controllers/informeController.js";
 import { subirCertificado, guardarCertificado, obtenerCertificado } from "../controllers/certificadoController.js";
@@ -81,5 +81,8 @@ router.get('/preinforme/tecnico/:id', auth, obtenerTecnicoPreinforme);
 
 // obtener falla preinforme
 router.put('/preinforme/actualizar/:id', auth, actualizarPreinforme);
+
+// obtener ingresos por mes
+router.post('/ingreso/mes', auth, obtenerIngresoMes);
 
 export default router;
