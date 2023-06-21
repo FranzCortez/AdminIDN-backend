@@ -22,7 +22,7 @@ const formularioLogin = async (req, res, next) => {
                id: usuario.id,
                tipo: usuario.tipo
             }, process.env.LLAVESECRETA, {
-                expiresIn: '12h'
+                expiresIn: '7d'
             });
 
             res.json({token, tipo: usuario.tipo, nombre: usuario.nombre});
