@@ -9,6 +9,7 @@ import clienteContactoRoutes from "./routes/clienteContactoRoutes.js";
 import TipoHerramienta from "./routes/tipoHerramientaRoutes.js";
 import ingresoHerramienta from "./routes/ingresoHerramientaRoutes.js";
 import factura from "./routes/facturaRoutes.js";
+import checkListRouter from './routes/checkListRoutes.js';
 import qr from "./routes/qrRoutes.js";
 import db from "./config/db.js";
 
@@ -57,6 +58,7 @@ app.use('/api/tipo', TipoHerramienta);
 app.use('/api/ih', ingresoHerramienta);
 app.use('/api/qr', qr);
 app.use('/api/factura', factura);
+app.use('/api/checklist', checkListRouter);
 
 // Puerto
 const port = process.env.PORT || 5000;
