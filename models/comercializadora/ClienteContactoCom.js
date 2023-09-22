@@ -1,8 +1,8 @@
 import { DataTypes } from "sequelize";
-import db from "../config/db.js";
-import ClienteEmpresa from "./ClienteEmpresa.js";
+import db from "../../config/db.js";
+import ClienteEmpresaCom from "./ClienteEmpresaCom.js";
 
-const ClienteContacto = db.define('clienteContacto', {
+const ClienteContactoCom = db.define('clienteContactoCom', {
     nombre: {
         type: DataTypes.STRING,
         allowNull: false
@@ -20,12 +20,12 @@ const ClienteContacto = db.define('clienteContacto', {
     },
     activo: {
         type: DataTypes.BOOLEAN,
-        default: true
+        defaultValue: true
     }
 }, {
     timestamps: false
 });
 
-ClienteContacto.belongsTo(ClienteEmpresa);
+ClienteContactoCom.belongsTo(ClienteEmpresaCom);
 
-export default ClienteContacto;
+export default ClienteContactoCom;

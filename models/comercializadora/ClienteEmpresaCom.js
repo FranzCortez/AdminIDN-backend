@@ -1,7 +1,7 @@
 import { DataTypes } from "sequelize";
-import db from "../config/db.js";
+import db from "../../config/db.js";
 
-const ClienteEmpresa = db.define('clienteEmpresa',{
+const ClienteEmpresaCom = db.define( 'clienteEmpresaCom', {
     rut: {
         type: DataTypes.STRING,
         allowNull: false
@@ -20,7 +20,7 @@ const ClienteEmpresa = db.define('clienteEmpresa',{
     },
     activo: {
         type: DataTypes.BOOLEAN,
-        default: true
+        defaultValue: true
     }
 }, {
     timestamps: false,
@@ -33,4 +33,4 @@ const ClienteEmpresa = db.define('clienteEmpresa',{
     }
 });
 
-export default ClienteEmpresa;
+export default ClienteEmpresaCom;

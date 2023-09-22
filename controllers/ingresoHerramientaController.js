@@ -112,7 +112,7 @@ const nuevoIngresoHerramienta = async (req, res, next) => {
             }
         });
     
-        return res.status(200).json({ msg: `Ingreso y herramienta: ${nombre} creada correctamente con otin: ${otin}`, herramientumId: herramienta.dataValues.id });
+        return res.status(200).json({ msg: `Ingreso y herramienta: ${nombre} creada correctamente con otin: ${otin}`, herramientumId: tipoHerramientaId });
 
     } catch (error) {
         console.log(error);

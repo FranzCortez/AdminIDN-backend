@@ -62,7 +62,7 @@ const obtenerContactosPorEmpresa = async (req, res, next) => {
         return next();
     }
 
-    const contactos = await ClienteContacto.findAll({ where: { clienteEmpresaId: id } });
+    const contactos = await ClienteContacto.findAll({ where: { clienteEmpresaId: id, activo: 1 } });
 
     res.status(200).json(contactos);
 }
@@ -138,12 +138,16 @@ const eliminarContactoEmpresa = async (req, res, next) => {
         return next();
     }
 
-    const contacto = await ClienteContacto.destroy({ where: { clienteEmpresaId: empresa.id, id: id } });
+    const contacto = await ClienteContacto.findOne({ where: { clienteEmpresaId: empresa.id, id: id } });
 
     if(!contacto){
         res.status(404).json({ msg: 'No existe ese contacto'});
         return next();
     }
+
+    contacto.activo = 0;
+
+    await contacto.save();
 
     res.status(200).json({ msg: 'Contacto empresa ha sido eliminado correctamente'});
 }
