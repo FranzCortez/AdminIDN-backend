@@ -3,7 +3,6 @@ import ClienteEmpresa from "../models/ClienteEmpresa.js";
 
 // agrega un nuevo contacto a la empresa
 const crearClienteContacto = async (req, res, next) => {
-    // TODO: Permisos
 
     const { idEmpresa: id } = req.params;
 
