@@ -11,6 +11,11 @@ import ingresoHerramienta from "./routes/ingresoHerramientaRoutes.js";
 import factura from "./routes/facturaRoutes.js";
 import checkListRouter from './routes/checkListRoutes.js';
 import qr from "./routes/qrRoutes.js";
+
+// COMERCIALIZADORA
+import clientesComRoutes from "./routes/comercializadoraRoutes/clientesComRoutes.js";
+import equipoComRoutes from "./routes/comercializadoraRoutes/equipoComRoutes.js";
+
 import db from "./config/db.js";
 
 //App
@@ -59,6 +64,9 @@ app.use('/api/ih', ingresoHerramienta);
 app.use('/api/qr', qr);
 app.use('/api/factura', factura);
 app.use('/api/checklist', checkListRouter);
+
+app.use('/api/clientescom', clientesComRoutes);
+app.use('/api/equipo', equipoComRoutes);
 
 // Puerto
 const port = process.env.PORT || 5000;

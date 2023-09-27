@@ -46,12 +46,13 @@ const todosClienteEmpresa = async (req, res) => {
     const offset = (parseInt(req.params.pag) || 0) * 10;
 
     const empresas = await ClienteEmpresa.findAll({ 
+        where: { activo: 1 },
         offset: offset, 
         limit: 10,
         order: [[ 'nombre', 'ASC' ]]
     });
 
-    const cantEmpresas = await ClienteEmpresa.findAll({});
+    const cantEmpresas = await ClienteEmpresa.findAll({where: { activo: 1 }});
 
     res.status(200).json({empresas, cantPag: Math.ceil(cantEmpresas.length / 10)});
 }
@@ -101,18 +102,21 @@ const actualizarClienteEmpresa = async (req, res, next) => {
 // elimina un cliente empresa por ID
 const eliminarClienteEmpresa = async (req, res) => {
 
-    const clientesContactoEmpresa = await ClienteContacto.findAll({ where: { clienteEmpresaId: req.params.id }});
+    // const clientesContactoEmpresa = await ClienteContacto.findAll({ where: { clienteEmpresaId: req.params.id }});
 
-    clientesContactoEmpresa.forEach( async (contacto) => {
-        await ClienteContacto.destroy({ where: {id: contacto.id}});
-    });
+    // clientesContactoEmpresa.forEach( async (contacto) => {
+    //     await ClienteContacto.destroy({ where: {id: contacto.id}});
+    // });
 
-    const empresa = await ClienteEmpresa.destroy({ where: {id: req.params.id}});
+    const empresa = await ClienteEmpresa.findOne({ where: {id: req.params.id}});
 
     if(!empresa){
         res.status(404).json({ msg: 'Empresa no existe'});
         return next();
     }
+
+    empresa.activo = 0;
+    await empresa.save();
 
     res.status(200).json({ msg: 'Empresa Eliminada Correctamente'});
 
@@ -140,6 +144,7 @@ const buscarPorNombre = async (req, res, next) => {
 
 const todosNombres = async (req, res) => {
     const empresas = await ClienteEmpresa.scope('nombre').findAll({
+        where: { activo: 1 },
         order: [[ 'nombre', 'ASC' ]]
     });
 
