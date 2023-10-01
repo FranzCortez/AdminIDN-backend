@@ -4,6 +4,7 @@ import ClienteContacto from "../models/ClienteContacto.js";
 import ClienteEmpresa from "../models/ClienteEmpresa.js";
 import Sequelize from "sequelize";
 import TipoHerramienta from "../models/TipoHerramienta.js";
+import FacturaIngreso from "../models/FacturaIngreso.js";
 const Op = Sequelize.Op;
 const fn = Sequelize.fn;
 
@@ -36,6 +37,11 @@ const nuevaFactura = async (req, res) => {
         await guardarOtines.forEach(async otin => {
             
             const herramienta = await Herramienta.findByPk(otin.id);
+
+            await FacturaIngreso.create({
+                idIngreso: herramienta.id,
+                idFactura: factura.id
+            });
 
             herramienta.facturaId = factura.id;
 
@@ -124,10 +130,21 @@ const obtenerFacturas = async ( req, res) => {
 
         facturas.forEach(factura => id.push(factura.id));
 
+        const allFacturasHerramienta = await FacturaIngreso.findAll({
+            where: {
+                facturaId: {
+                    [Op.or]: id
+                }
+            }
+        })
+
+        
+        const idHerramienta = allFacturasHerramienta.map(enlace => enlace.herramientumId)
+
         // traer todos los ingresos asociados a 1 factura
         const herramientas = await Herramienta.scope('factura').findAll({
             where: { 
-                facturaId: { [Op.or]: id } 
+                id: { [Op.or]: idHerramienta } 
             },
             include: [
                 {
@@ -155,7 +172,9 @@ const obtenerFacturas = async ( req, res) => {
             
             const iguales = herramientas.filter(herramienta =>{
 
-                if ( herramienta.facturaId === factura.id ) {
+                const facturaId = allFacturasHerramienta.find(fh => herramienta.id == fh.herramientumId)
+
+                if ( facturaId.facturaId === factura.id ) {
                     
                     if ( otines === '' ) {
                         otines = herramienta.otin;
@@ -224,24 +243,22 @@ const actualizarFactura = async (req, res) => {
         
         await factura.save();
 
-        const herramientaAntigua = await Herramienta.findAll({ where: { facturaId: factura.id } });
+        const enlazeAntiguo = await FacturaIngreso.findAll({ where: { facturaId: factura.id } });
 
-        await herramientaAntigua.forEach(async herramienta => {
+        await enlazeAntiguo.forEach(async herramienta => {
             
-            if ( !guardarOtines.find(otin => otin.id == herramienta.id) ){
-                herramienta.facturaId = null;
-                await herramienta.save();
+            if ( !guardarOtines.find(otin => otin.id == herramienta.herramientumId) ){
+                await herramienta.destroy();
             }
 
         });
 
         await guardarOtines.forEach(async otin => {
             
-            const herramienta = await Herramienta.findByPk(otin.id);
-
-            herramienta.facturaId = factura.id;
-
-            await herramienta.save();
+            await FacturaIngreso.create({
+                facturaId: factura.id,
+                herramientumId: otin.id
+            })
 
         });
 
@@ -320,11 +337,10 @@ const notaCredito = async (req, res) => {
     factura.estado = 'Anulada';
     factura.numeroNotaCredito = req.body.numeroNotaCredito;
 
-    const herramientas = await Herramienta.scope('factura').findAll({ where: { facturaId : id } });
+    const facturaingreso = await FacturaIngreso.findAll({ where: { facturaId: id } });
 
-    await herramientas.forEach(async herramienta => {
-        herramienta.facturaId = null;
-        await herramienta.save();
+    await facturaingreso.forEach(async herramienta => {
+        await herramienta.destroy();
     });
 
     await factura.save();
@@ -360,10 +376,22 @@ const obtenerFactura = async ( req, res) => {
 
         const factura = await Factura.findByPk(id);
 
+        const allFacturasHerramienta = await FacturaIngreso.findAll({
+            where: {
+                facturaId: {
+                    [Op.or]: factura.id
+                }
+            }
+        })
+        
+        const idHerramienta = allFacturasHerramienta.map(enlace => enlace.herramientumId)
+
         // traer todos los ingresos asociados a 1 factura
         const herramientas = await Herramienta.scope('factura').findAll({
             where: { 
-                facturaId: factura.id 
+                id: {
+                    [Op.or]: idHerramienta 
+                }
             },
             include: {
                 model: ClienteContacto,
@@ -480,11 +508,21 @@ const boletaAutomatica = async (req, res) => {
 
         facturas.forEach( factura => id.push(factura.id) );
 
+        const allFacturasHerramienta = await FacturaIngreso.findAll({
+            where: {
+                facturaId: {
+                    [Op.or]: id
+                }
+            }
+        })
+        
+        const idHerramienta = allFacturasHerramienta.map(enlace => enlace.herramientumId)
+
         // traer todos los ingresos asociados a 1 factura
         const herramientas = await Herramienta.scope('factura').findAll({
             where: { 
-                facturaId: {
-                    [Op.or]: id
+                id: {
+                    [Op.or]: idHerramienta
                 }
             },
             include: {
@@ -505,8 +543,9 @@ const boletaAutomatica = async (req, res) => {
             let otines = '';
             
             const iguales = herramientas.filter(herramienta =>{
+                const facturaId = allFacturasHerramienta.find(fh => herramienta.id == fh.herramientumId)
 
-                if ( herramienta.facturaId === factura.id ) {
+                if ( facturaId.facturaId === factura.id ) {
                     
                     if ( otines === '' ) {
                         otines = herramienta.otin;
@@ -588,10 +627,20 @@ const obtenerFacturaMesAño = async (req, res) => {
         
         facturas.forEach(factura => id.push(factura.id));
 
-        const herramientas = await Herramienta.findAll({
+        const allFacturasHerramienta = await FacturaIngreso.findAll({
             where: {
                 facturaId: {
                     [Op.or]: id
+                }
+            }
+        })
+        
+        const idHerramienta = allFacturasHerramienta.map(enlace => enlace.herramientumId)
+
+        const herramientas = await Herramienta.findAll({
+            where: {
+                id: {
+                    [Op.or]: idHerramienta
                 }
             },
             attributes: ['id', 'otin', 'clienteContactoId', 'facturaId'],
@@ -612,8 +661,9 @@ const obtenerFacturaMesAño = async (req, res) => {
             let otines = '';
             
             const iguales = herramientas.filter(herramienta =>{
+                const facturaId = allFacturasHerramienta.find(fh => herramienta.id == fh.herramientumId)
 
-                if ( herramienta.facturaId === factura.id ) {
+                if ( facturaId.facturaId === factura.id ) {
                     
                     if ( otines === '' ) {
                         otines = herramienta.otin;
@@ -670,11 +720,22 @@ const obtenerIngresoMesAño = async (req, res) => {
         const id = [];
         
         facturas.forEach(factura => id.push(factura.id));
-
-        const herramientas = await Herramienta.findAll({
+        
+        const allFacturasHerramienta = await FacturaIngreso.findAll({
             where: {
                 facturaId: {
                     [Op.or]: id
+                }
+            }
+        })
+        
+        const idHerramienta = allFacturasHerramienta.map(enlace => enlace.herramientumId)
+
+
+        const herramientas = await Herramienta.findAll({
+            where: {
+                id: {
+                    [Op.or]: idHerramienta
                 }
             },
             attributes: ['id', 'otin', 'clienteContactoId', 'facturaId'],
@@ -695,8 +756,9 @@ const obtenerIngresoMesAño = async (req, res) => {
             let otines = '';
             
             const iguales = herramientas.filter(herramienta =>{
+                const facturaId = allFacturasHerramienta.find(fh => herramienta.id == fh.herramientumId)
 
-                if ( herramienta.facturaId === factura.id ) {
+                if ( facturaId.facturaId === factura.id ) {
                     
                     if ( otines === '' ) {
                         otines = herramienta.otin;

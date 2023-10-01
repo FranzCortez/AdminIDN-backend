@@ -575,6 +575,21 @@ const obtenerIngresoMes = async (req, res) => {
 
 }
 
+const obtenerOtinManual = async (req, res) => {
+    try {
+        
+        const { otin } = req.body;
+
+        const otinManual = await Herramienta.findOne( { where: { otin } } );
+
+        return res.status(200).json(otinManual);
+
+    } catch (error) {
+        console.log(error);
+        return res.status(404).json({msg: 'Error al obtener OTIN'});
+    }
+}
+
 export {
     obtenerOtin,
     nuevoIngresoHerramienta,
@@ -591,4 +606,5 @@ export {
     obtenerTecnicoPreinforme,
     actualizarPreinforme,
     obtenerIngresoMes,
+    obtenerOtinManual,
 }
