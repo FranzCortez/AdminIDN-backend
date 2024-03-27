@@ -15,6 +15,7 @@ import qr from "./routes/qrRoutes.js";
 // COMERCIALIZADORA
 import clientesComRoutes from "./routes/comercializadoraRoutes/clientesComRoutes.js";
 import equipoComRoutes from "./routes/comercializadoraRoutes/equipoComRoutes.js";
+import proveedorComRoutes from "./routes/comercializadoraRoutes/proveedorComRoutes.js";
 
 import db from "./config/db.js";
 
@@ -67,6 +68,7 @@ app.use('/api/checklist', checkListRouter);
 
 app.use('/api/clientescom', clientesComRoutes);
 app.use('/api/equipo', equipoComRoutes);
+app.use('/api/proveedor', proveedorComRoutes);
 
 // Puerto
 const port = process.env.PORT || 5000;

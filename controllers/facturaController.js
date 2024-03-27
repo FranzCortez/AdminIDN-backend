@@ -33,29 +33,38 @@ const nuevaFactura = async (req, res) => {
             fechaGuiaDespacho,
             guiaDespacho
         });
+
+        if ( guardarOtines.length > 0 ) {
+
+            await guardarOtines.forEach(async otin => {
                 
-        await guardarOtines.forEach(async otin => {
-            
-            const herramienta = await Herramienta.findByPk(otin.id);
-
-            await FacturaIngreso.create({
-                idIngreso: herramienta.id,
-                idFactura: factura.id
+                const herramienta = await Herramienta.findByPk(otin.id);
+    
+                await FacturaIngreso.create({
+                    herramientumId: herramienta.id,
+                    facturaId: factura.dataValues.id
+                });
+    
+                herramienta.facturaId = factura.dataValues.id;
+    
+                if ( herramienta.fechaGuiaDespacho === null ) {
+                    herramienta.fechaGuiaDespacho = fechaGuiaDespacho;
+                }
+    
+                if ( herramienta.guiaDespacho === '-' || herramienta.guiaDespacho === '' ) {
+                    herramienta.guiaDespacho = guiaDespacho;
+                }
+    
+                await herramienta.save();
+    
             });
-
-            herramienta.facturaId = factura.id;
-
-            if ( herramienta.fechaGuiaDespacho === null ) {
-                herramienta.fechaGuiaDespacho = fechaGuiaDespacho;
-            }
-
-            if ( herramienta.guiaDespacho === '-' || herramienta.guiaDespacho === '' ) {
-                herramienta.guiaDespacho = guiaDespacho;
-            }
-
-            await herramienta.save();
-
-        });
+        } else {
+            await FacturaIngreso.create({
+                herramientumId: null,
+                facturaId: factura.dataValues.id
+            });
+        }
+                
 
         return res.status(200).json({ msg: 'Factura agregada correctamente' });
 
@@ -96,112 +105,142 @@ const obtenerFacturas = async ( req, res) => {
                 [Op.eq] : estado
             }
         }
-        
-        let facturas = await Factura.findAll({ 
-            where,
+
+        let enlaceFacturaHerramienta = await FacturaIngreso.findAll({
             offset,
-            limit: idEmpresa !== '' && idEmpresa && idEmpresa !== '0' ? 100000 : 20,
-            order: [[ 'numeroFactura', 'DESC' ]]
-        });
-
-        where = {};
-
-        if ( idEmpresa !== '' && idEmpresa && idEmpresa !== '0' ) {
-            
-            where.clienteEmpresaId = {
-                [Op.eq] : idEmpresa
-            }
-
-        }
-
-        if ( mes !== '' && mes ) {
-            
-            facturas = facturas.filter( factura => factura.fechaFactura.split("-")[1] == mes)
-
-        }
-
-        if ( year !== '' && year ) {
-            
-            facturas = facturas.filter( factura => factura.fechaFactura.split("-")[0] == year)
-
-        }
-
-        const id = [];
-
-        facturas.forEach(factura => id.push(factura.id));
-
-        const allFacturasHerramienta = await FacturaIngreso.findAll({
-            where: {
-                facturaId: {
-                    [Op.or]: id
-                }
-            }
-        })
-
-        
-        const idHerramienta = allFacturasHerramienta.map(enlace => enlace.herramientumId)
-
-        // traer todos los ingresos asociados a 1 factura
-        const herramientas = await Herramienta.scope('factura').findAll({
-            where: { 
-                id: { [Op.or]: idHerramienta } 
-            },
             include: [
                 {
-                    model: ClienteContacto,
+                    model: Factura,
                     where,
-                    attributes: ['nombre', 'clienteEmpresaId', 'correo', 'telefono'],
-                    include: {
-                        model: ClienteEmpresa,                    
-                        attributes: ['id', 'nombre']
-                    }
                 },
                 {
-                    model: TipoHerramienta,
-                    attributes: ['nombre']
+                    model: Herramienta,
+                    include: [
+                        {
+                            model: ClienteContacto,
+                            where: idEmpresa !== '' && idEmpresa && idEmpresa !== '0' ? { clienteEmpresaId: { [Op.eq] : idEmpresa } } : {},
+                            attributes: ['nombre', 'clienteEmpresaId', 'correo', 'telefono'],
+                            include: {
+                                model: ClienteEmpresa,                    
+                                attributes: ['id', 'nombre']
+                            }
+                        },
+                        {
+                            model: TipoHerramienta,
+                            attributes: ['nombre']
+                        }
+                    ]
                 }
-            ]
-        });
+            ],
+            limit: !!(idEmpresa !== '' && idEmpresa && idEmpresa !== '0') || !!(mes !== '' && mes) || !!(year !== '' && year) ? 100000 : 20,
+            order: [[ 'facturaId', 'DESC' ]]
+        })
 
-        const facturaFiltro = [];
+        // console.log(JSON.stringify(enlaceFacturaHerramienta[0], null, 2))
+        // console.log(enlaceFacturaHerramienta.length)
 
-        facturas.forEach((factura) => {
+        // FILTROS 
+        enlaceFacturaHerramienta = await enlaceFacturaHerramienta.map( enlace => {
 
-            let otines = '';
-            const infoOtin = [];
-            
-            const iguales = herramientas.filter(herramienta =>{
+            if ( enlace.factura != null ){
 
-                const facturaId = allFacturasHerramienta.find(fh => herramienta.id == fh.herramientumId)
+                const nuevoObjFactura = {
+                    id: enlace.factura.id,
+                    numeroFactura: enlace.factura.numeroFactura,
+                    fechaFactura: enlace.factura.fechaFactura,
+                    numeroCompra: enlace.factura.numeroCompra,
+                    fechaCompra: enlace.factura.fechaCompra,
+                    formaPago: enlace.factura.formaPago,
+                    monto: enlace.factura.monto,
+                    fechaPago: enlace.factura.fechaPago,
+                    observaciones: enlace.factura.observaciones,
+                    estado: enlace.factura.estado,
+                    guiaDespacho: enlace.factura.guiaDespacho,
+                    fechaGuiaDespacho: enlace.factura.fechaGuiaDespacho,
+                    numeroNotaCredito: enlace.factura.numeroNotaCredito,
+                    boletaPagado: enlace.factura.boletaPagado
+                };
 
-                if ( facturaId.facturaId === factura.id ) {
-                    
-                    if ( otines === '' ) {
-                        otines = herramienta.otin;
-                    } else {
-                        otines = otines + ", " + herramienta.otin;
+                nuevoObjFactura.herramientas = enlace.herramientum == null ? null : {
+                    id: enlace.herramientum?.id,
+                    otin: enlace.herramientum?.otin,
+                    nombre: enlace.herramientum?.nombre,
+                    marca: enlace.herramientum?.marca,
+                    fecha: enlace.herramientum?.fecha,
+                    comentario: enlace.herramientum?.comentario,
+                    modelo: enlace.herramientum?.modelo,
+                    numeroSerie: enlace.herramientum?.numeroSerie,
+                    numeroInterno: enlace.herramientum?.numeroInterno,
+                    numeroGuiaCliente: enlace.herramientum?.numeroGuiaCliente,
+                    guiaDespacho: enlace.herramientum?.guiaDespacho,
+                    fechaGuiaDespacho: enlace.herramientum?.fechaGuiaDespacho,
+                    activo: enlace.herramientum?.activo,
+                    usuario: enlace.herramientum?.usuario,
+                    facturaId: enlace.herramientum?.facturaId,
+                    tipoHerramientaId: enlace.herramientum?.tipoHerramientaId,
+                    clienteContactoId: enlace.herramientum?.clienteContactoId,
+                    clienteContacto: {
+                        nombre: enlace.herramientum?.clienteContacto.nombre,
+                        clienteEmpresaId: enlace.herramientum?.clienteContacto.clienteEmpresaId,
+                        correo: enlace.herramientum?.clienteContacto.correo,
+                        telefono: enlace.herramientum?.clienteContacto.telefono,
+                        clienteEmpresa: {
+                            id: enlace.herramientum?.clienteContacto.clienteEmpresa.id,
+                            nombre: enlace.herramientum?.clienteContacto.clienteEmpresa.nombre
+                        }
+                    },
+                    tipoHerramientum: {
+                        nombre: enlace.herramientum?.tipoHerramientum.nombre
                     }
+                };
 
-                    infoOtin.push(herramienta);
-
-                    return herramienta;
+                if ( idEmpresa !== '' && idEmpresa && idEmpresa !== '0' ) {
+                    
+                    if ( enlace.herramientum != null ) {
+                        return nuevoObjFactura;
+                    }
+                    
+                } else {
+                    return nuevoObjFactura;
                 }
-
-            });
-
-            if( iguales.length > 0 ) {
-                factura.dataValues.herramientas = iguales;
-                factura.dataValues.otines = otines;
-                factura.dataValues.infoOtines = infoOtin;
-    
-                facturaFiltro.push(factura);
-            } else if ( (factura.estado === 'No Existe' && !(idEmpresa > 0)) || factura.estado === 'Anulada'&& !(idEmpresa > 0) ){
-                facturaFiltro.push(factura);
             }
-
         });
+       
+        
+        enlaceFacturaHerramienta = enlaceFacturaHerramienta.filter(notNull => typeof notNull !== 'undefined')
+        
+        // if ( mes !== '' && mes ) {
+        //     enlaceFacturaHerramienta = enlaceFacturaHerramienta.filter( factura => factura.fechaFactura.split("-")[1] == mes)
+        // }
 
-        return res.status(200).json(facturaFiltro);
+        // if ( year !== '' && year ) {
+            
+        //     enlaceFacturaHerramienta = enlaceFacturaHerramienta.filter( factura => factura.fechaFactura.split("-")[0] == year)
+
+        // }
+
+        enlaceFacturaHerramienta = enlaceFacturaHerramienta.reduce((acumulador, elemento) => {
+            const existente = acumulador.find((item) => item.numeroFactura === elemento.numeroFactura);
+          
+            if (existente) {
+              // Si ya existe un elemento con el mismo "id", agrégalo a su subarreglo
+              existente.herramientas.push(elemento.herramientas);
+              existente.infoOtines.push(elemento.herramientas);
+
+              let otinNueva = elemento.herramientas.otin;
+
+              existente.otines = existente.otines + ', ' + otinNueva;
+
+            } else {
+                // console.log(JSON.stringify(elemento, null, 2))
+              // Si no existe, crea un nuevo elemento con el subarreglo
+              acumulador.push({ ...elemento, herramientas: !elemento.herramientas ? null : [ elemento.herramientas ], infoOtines: !elemento.herramientas ? null : [ elemento.herramientas ], otines: elemento.herramientas?.otin });
+            }
+          
+            return acumulador;
+        }, []);
+        
+        return res.status(200).json(enlaceFacturaHerramienta);
 
     } catch (error) {
         console.log(error);
@@ -338,12 +377,22 @@ const notaCredito = async (req, res) => {
     factura.numeroNotaCredito = req.body.numeroNotaCredito;
 
     const facturaingreso = await FacturaIngreso.findAll({ where: { facturaId: id } });
-
-    await facturaingreso.forEach(async herramienta => {
-        await herramienta.destroy();
+    console.log(facturaingreso, id)
+    await facturaingreso.forEach(async fh => {
+        fh.herramientumId = null;
+        await fh.save();
     });
 
     await factura.save();
+
+    const otines = await Herramienta.findAll({ where: { facturaId: id } });
+
+    if ( otines.length ) {
+        for (const otin of otines) {
+            otin.facturaId = null;
+            await otin.save();
+        }
+    }
 
     return res.status(200).json({ msg: 'Factura anulada correctamente' });
 }
@@ -371,56 +420,58 @@ const pagarFactura = async (req, res) => {
 const obtenerFactura = async ( req, res) => {
 
     try {
-        
+
         const { id } = req.params;
 
-        const factura = await Factura.findByPk(id);
-
-        const allFacturasHerramienta = await FacturaIngreso.findAll({
+        const enlaceFacturaHerramienta = await FacturaIngreso.findAll({
             where: {
-                facturaId: {
-                    [Op.or]: factura.id
-                }
-            }
-        })
-        
-        const idHerramienta = allFacturasHerramienta.map(enlace => enlace.herramientumId)
-
-        // traer todos los ingresos asociados a 1 factura
-        const herramientas = await Herramienta.scope('factura').findAll({
-            where: { 
-                id: {
-                    [Op.or]: idHerramienta 
-                }
+                facturaId: id
             },
-            include: {
-                model: ClienteContacto,
-                attributes: ['nombre', 'clienteEmpresaId'],
-                include: {
-                    model: ClienteEmpresa,
-                    attributes: ['id', 'nombre']
+            include: [
+                {
+                    model: Factura
+                },
+                {
+                    model: Herramienta,
+                    attributes: ['otin', 'id', 'clienteContactoId']
                 }
+            ],
+        })
+
+        const empresa = await ClienteContacto.findByPk(enlaceFacturaHerramienta[0].herramientum.clienteContactoId);
+
+        const nuevoObjFactura = {
+            id: enlaceFacturaHerramienta[0].factura.id,
+            numeroFactura: enlaceFacturaHerramienta[0].factura.numeroFactura,
+            fechaFactura: enlaceFacturaHerramienta[0].factura.fechaFactura,
+            numeroCompra: enlaceFacturaHerramienta[0].factura.numeroCompra ,
+            fechaCompra: enlaceFacturaHerramienta[0].factura.fechaCompra,
+            formaPago: enlaceFacturaHerramienta[0].factura.formaPago ,
+            monto: enlaceFacturaHerramienta[0].factura.monto ,
+            fechaPago: enlaceFacturaHerramienta[0].factura.fechaPago ,
+            observaciones: enlaceFacturaHerramienta[0].factura.observaciones,
+            estado: enlaceFacturaHerramienta[0].factura.estado ,
+            guiaDespacho: enlaceFacturaHerramienta[0].factura.guiaDespacho,
+            fechaGuiaDespacho: enlaceFacturaHerramienta[0].factura.fechaGuiaDespacho,
+            numeroNotaCredito: enlaceFacturaHerramienta[0].factura.numeroNotaCredito,
+            boletaPagado: enlaceFacturaHerramienta[0].factura.boletaPagado,
+            empresaId: empresa.clienteEmpresaId,
+            guardarOtines: {
+                otinLabel: '',
+                otines: [],
+                ids: []
             }
-        });
-        
-        let otines = '';
-            
-        const iguales = herramientas.filter(herramienta =>{
+        };
 
-            if ( otines === '' ) {
-                otines = herramienta.otin;
-            } else {
-                otines = otines + ", " + herramienta.otin;
-            }
+        enlaceFacturaHerramienta.forEach( enlace => {
 
-            return herramienta;
+            nuevoObjFactura.guardarOtines.otinLabel + ', ' + enlace.herramientum.otin
+            nuevoObjFactura.guardarOtines.ids.push(enlace.herramientum.id);
+            nuevoObjFactura.guardarOtines.otines.push(enlace.herramientum.otin);
+
         });
 
-        factura.dataValues.herramientas = iguales;
-        factura.dataValues.otines = otines;
-        factura.dataValues.empresaId = factura.dataValues.herramientas[0].clienteContacto.clienteEmpresaId;
-
-        return res.status(200).json(factura);
+        return res.status(200).json(nuevoObjFactura);
 
     } catch (error) {
         return res.status(404);
@@ -540,26 +591,23 @@ const boletaAutomatica = async (req, res) => {
 
         facturas.forEach((factura) => {
 
-            let otines = '';
-            
-            const iguales = herramientas.filter(herramienta =>{
-                const facturaId = allFacturasHerramienta.find(fh => herramienta.id == fh.herramientumId)
+            const mismaFactura = [];
+            const infoOtin = [];
 
-                if ( facturaId.facturaId === factura.id ) {
-                    
-                    if ( otines === '' ) {
-                        otines = herramienta.otin;
-                    } else {
-                        otines = otines + ", " + herramienta.otin;
-                    }
-
-                    return herramienta;
+            allFacturasHerramienta.forEach( fh => {
+                if ( factura.id === fh.facturaId ) {
+                    mismaFactura.push(herramientas.find(herramienta => herramienta.id == fh.dataValues.herramientumId));
                 }
-
+            });
+            mismaFactura.forEach(herramienta => {
+                infoOtin.push(herramienta);
             });
 
-            if( iguales.length > 0 ) {
-                factura.dataValues.herramientas = iguales;
+            const nombres = mismaFactura.map(objeto => objeto.otin);
+            const otines = nombres.join(', ');
+
+            if( infoOtin.length > 0 ) {
+                factura.dataValues.herramientas = infoOtin;
                 factura.dataValues.otines = otines;
     
                 facturaFiltro.push(factura);
@@ -616,7 +664,7 @@ const obtenerFacturaMesAño = async (req, res) => {
                     Sequelize.where(Sequelize.fn('YEAR', Sequelize.col('fechaFactura')), año),
                 ],
             },
-            attributes: ['id', 'fechaFactura', 'monto', 'numeroFactura']
+            attributes: ['id', 'fechaFactura', 'monto', 'numeroFactura', 'estado']
         });
 
         if ( facturas.length === 0 ) {
@@ -658,26 +706,23 @@ const obtenerFacturaMesAño = async (req, res) => {
 
         facturas.forEach((factura) => {
 
-            let otines = '';
-            
-            const iguales = herramientas.filter(herramienta =>{
-                const facturaId = allFacturasHerramienta.find(fh => herramienta.id == fh.herramientumId)
+            const mismaFactura = [];
+            const infoOtin = [];
 
-                if ( facturaId.facturaId === factura.id ) {
-                    
-                    if ( otines === '' ) {
-                        otines = herramienta.otin;
-                    } else {
-                        otines = otines + ", " + herramienta.otin;
-                    }
-
-                    return herramienta;
+            allFacturasHerramienta.forEach( fh => {
+                if ( factura.id === fh.facturaId && factura.estado != 'Anulada' ) {
+                    mismaFactura.push(herramientas.find(herramienta => herramienta.id == fh.dataValues.herramientumId));
                 }
-
+            });
+            mismaFactura.forEach(herramienta => {
+                infoOtin.push(herramienta);
             });
 
-            if( iguales.length > 0 ) {
-                factura.dataValues.herramientas = iguales;
+            const nombres = mismaFactura.map(objeto => objeto.otin);
+            const otines = nombres.join(', ');
+
+            if( infoOtin.length > 0 ) {
+                factura.dataValues.herramientas = infoOtin;
                 factura.dataValues.otines = otines;
     
                 datos.push(factura);
@@ -752,27 +797,23 @@ const obtenerIngresoMesAño = async (req, res) => {
         const datos = [];
 
         facturas.forEach((factura) => {
+            const mismaFactura = [];
+            const infoOtin = [];
 
-            let otines = '';
-            
-            const iguales = herramientas.filter(herramienta =>{
-                const facturaId = allFacturasHerramienta.find(fh => herramienta.id == fh.herramientumId)
-
-                if ( facturaId.facturaId === factura.id ) {
-                    
-                    if ( otines === '' ) {
-                        otines = herramienta.otin;
-                    } else {
-                        otines = otines + ", " + herramienta.otin;
-                    }
-
-                    return herramienta;
+            allFacturasHerramienta.forEach( fh => {
+                if ( factura.id === fh.facturaId ) {
+                    mismaFactura.push(herramientas.find(herramienta => herramienta.id == fh.dataValues.herramientumId));
                 }
-
+            });
+            mismaFactura.forEach(herramienta => {
+                infoOtin.push(herramienta);
             });
 
-            if( iguales.length > 0 ) {
-                factura.dataValues.herramientas = iguales;
+            const nombres = mismaFactura.map(objeto => objeto.otin);
+            const otines = nombres.join(', ');
+
+            if( infoOtin.length > 0 ) {
+                factura.dataValues.herramientas = infoOtin;
                 factura.dataValues.otines = otines;
     
                 datos.push(factura);

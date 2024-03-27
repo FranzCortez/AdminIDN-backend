@@ -228,11 +228,24 @@ const ingresosFiltroTodos = async (req, res, next) => {
         order: [['otin', 'DESC']]
     });
 
+    const idHerramienta = herramientas.map(herramienta => herramienta.id);
+
+    const preinforme = await Preinforme.findAll({
+        where: {
+            herramientumId: {
+                [Op.in]: idHerramienta
+            }
+        }
+    });
+
     const cant = await Herramienta.scope('filtro').findAll({where});
 
     const archivos = await Archivos.scope('cotizacion').findAll();
     
     const herramientaFiltro = herramientas.map( herramienta =>{
+
+        const existePreinforme = preinforme.find(preinfo => preinfo.herramientumId == herramienta.id);
+
         const existe = archivos.find(archivo => archivo.herramientumId === herramienta.id && archivo.rutaCotizacion !== null);
         // guardar referencia y referencia null
         if(existe) {
@@ -240,6 +253,13 @@ const ingresosFiltroTodos = async (req, res, next) => {
         } else {
             herramienta.dataValues.archivo = false;
         }
+
+        if ( existePreinforme ) {
+            herramienta.dataValues.preinforme = true;
+        } else {
+            herramienta.dataValues.preinforme = false;
+        }
+
         return herramienta;
     });
     
