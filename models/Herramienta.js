@@ -57,6 +57,10 @@ const Herramienta = db.define('herramienta', {
     usuario: {
         type: DataTypes.STRING,
         allowNull: true
+    },
+    usuarioId: {
+        type: DataTypes.INTEGER,
+        allowNull: true
     }
 }, {
     timestamps: false,

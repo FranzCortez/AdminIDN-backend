@@ -16,6 +16,7 @@ import qr from "./routes/qrRoutes.js";
 import clientesComRoutes from "./routes/comercializadoraRoutes/clientesComRoutes.js";
 import equipoComRoutes from "./routes/comercializadoraRoutes/equipoComRoutes.js";
 import proveedorComRoutes from "./routes/comercializadoraRoutes/proveedorComRoutes.js";
+import ingresoComRoutes from "./routes/comercializadoraRoutes/ingresoComRoutes.js"
 
 import db from "./config/db.js";
 
@@ -44,7 +45,8 @@ const corsOptions = {
         }
     }
 }
-app.use(cors(corsOptions));
+// app.use(cors(corsOptions));
+app.use(cors());
 
 // Conexion DB
 try {
@@ -69,6 +71,7 @@ app.use('/api/checklist', checkListRouter);
 app.use('/api/clientescom', clientesComRoutes);
 app.use('/api/equipo', equipoComRoutes);
 app.use('/api/proveedor', proveedorComRoutes);
+app.use('/api/ingresocom', ingresoComRoutes);
 
 // Puerto
 const port = process.env.PORT || 5000;

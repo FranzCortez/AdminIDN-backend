@@ -15,7 +15,9 @@ import {
     obtenerContactoEspecificoCom,
     actualizarContactoEmpresaCom,
     eliminarContactoEmpresaCom,
-    contactoInfoCom
+    contactoInfoCom,
+    getClientesSelect,
+    getClienteContactosSelect
 } from "../../controllers/comercializadoraController/clientesControllerCom.js";
 import { auth } from "../../middleware/auth.js";
 
@@ -44,6 +46,9 @@ router.get('/empresacomBuscar/:nombre',auth , buscarPorNombreCom);
 
 router.get('/empresacomNombre',auth , todosNombresCom);
 
+// todos clientes empresa form
+router.get('/empresacomForm', auth, getClientesSelect);
+
 // CONTACTO EMPRESA
 
 // crea un nuevo contacto para una empresa
@@ -66,5 +71,8 @@ router.get('/contactocom/info/:id',auth , contactoInfoCom);
 
 // autocompleta si existe la empresa
 router.post('/contacocom', auth, buscarContactoExiste);
+
+// todos clientes contactos de 1 empresa form
+router.get('/empresacomForm/cliente/:id', auth, getClienteContactosSelect);
 
 export default router;

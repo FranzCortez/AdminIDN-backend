@@ -26,6 +26,15 @@ const Usuario = db.define('usuario', {
     tipo: {
         type: DataTypes.INTEGER,
         allowNull: false
+    },
+    activo: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: 1,
+        allowNull: false
+    },
+    color: {
+        type: DataTypes.STRING,
+        allowNull: true
     }
 }, {
     hooks:{

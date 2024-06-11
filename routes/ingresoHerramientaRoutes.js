@@ -14,7 +14,7 @@ router.get('/otin', auth, obtenerOtin);
 router.post('/ingreso',auth , nuevoIngresoHerramienta);
 
 // se obtiene los ingresos segun los filtros
-router.post('/ingreso/obtener/:offset',auth , ingresosFiltroTodos);
+router.post('/ingreso/obtener/:offset/:id',auth , ingresosFiltroTodos);
 
 // obtener ingreso segun empresID
 router.post('/ingreso/empresa', auth, ingresoIdEmpresa);

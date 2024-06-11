@@ -213,6 +213,49 @@ const nuevoContacto = async ( req, res ) => {
     return res.status(200).json({ msg: 'ok'})
 }
 
+const getProveedoresSelect = async ( req, res ) => {
+
+    try {
+        
+        const proveedores = await Proveedor.findAll({ where: { activo: 1 }, order: [[ 'nombre', 'ASC' ]] });
+
+        const data = [];
+
+        for (const proveedor of proveedores) {
+            data.push({ value: proveedor.id, text: proveedor.nombre })
+        }
+
+        return res.status(200).json(data);
+
+    } catch (error) {
+        console.error(error)
+        return res.status(400).json({ msg: 'Error al traer los proveedores' });
+    }
+
+}
+
+const getProveedorContactosSelect = async ( req, res ) => {
+
+    try {
+        
+        const { id } = req.params;
+
+        const contactos = await ProveedorContactoCom.findAll({ where: { activo: 1, proveedorComId: id }, order: [[ 'nombre', 'ASC' ]] });
+
+        const data = [];
+
+        for (const contacto of contactos) {
+            data.push({ value: contacto.id, text: contacto.nombre })
+        }
+
+        return res.status(200).json(data);
+
+    } catch (error) {
+        console.error(error)
+        return res.status(400).json({ msg: 'Error al traer los proveedores contacto' });
+    }
+
+}
 export {
     actualizarProveedor,
     desactivarProveedor,
@@ -224,5 +267,7 @@ export {
     actualizarContacto,
     eliminarContacto,
     editarContacto,
-    nuevoContacto
+    nuevoContacto,
+    getProveedoresSelect,
+    getProveedorContactosSelect
 }

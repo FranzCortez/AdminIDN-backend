@@ -151,6 +151,21 @@ const todosNombres = async (req, res) => {
     return res.status(200).json(empresas)
 }
 
+const nombreEmpresaSelect = async (req, res) => {
+    const empresas = await ClienteEmpresa.scope('nombre').findAll({
+        where: { activo: 1 },
+        order: [[ 'nombre', 'ASC' ]]
+    });
+
+    const data = [];
+
+    for (const empresa of empresas) {
+        data.push({ value: empresa.id, text: empresa.nombre })
+    }
+
+    return res.status(200).json(data);
+}
+
 export {
     nuevoClienteEmpresa,
     todosClienteEmpresa,
@@ -158,5 +173,6 @@ export {
     actualizarClienteEmpresa,
     eliminarClienteEmpresa,
     buscarPorNombre,
-    todosNombres
+    todosNombres,
+    nombreEmpresaSelect
 }

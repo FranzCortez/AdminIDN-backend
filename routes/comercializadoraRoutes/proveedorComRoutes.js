@@ -10,7 +10,9 @@ import {
     eliminarContacto,
     obtenerContactos,
     editarContacto,
-    nuevoContacto
+    nuevoContacto,
+    getProveedorContactosSelect,
+    getProveedoresSelect
 } from "../../controllers/comercializadoraController/proveedorControllerCom.js";
 import { auth } from "../../middleware/auth.js";
 
@@ -37,5 +39,9 @@ router.put('/contactocom/:id', auth, actualizarContacto);
 router.delete('/contactocom/:id', auth, eliminarContacto);
 
 router.post('/contactocom/:id', auth, nuevoContacto);
+
+router.get('/proveedorForm/select', auth, getProveedoresSelect);
+
+router.get('/proveedorForm/contacto/:id', auth, getProveedorContactosSelect);
 
 export default router;

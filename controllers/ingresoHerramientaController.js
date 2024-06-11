@@ -79,7 +79,7 @@ const obtenerOtin = async ( req, res ) => {
 // crea un nuevo ingreso y herramienta
 const nuevoIngresoHerramienta = async (req, res, next) => {
     
-    const { nombre, marca, comentario, modelo, numeroInterno, numeroGuiaCliente, tipoHerramientaId, clienteContactoId, fecha, numeroSerie, guiaDespacho, fechaGuiaDespacho, otin, usuario } = req.body;
+    const { nombre, marca, comentario, modelo, numeroInterno, numeroGuiaCliente, tipoHerramientaId, clienteContactoId, fecha, numeroSerie, guiaDespacho, fechaGuiaDespacho, otin, usuario, usuarioId } = req.body;
 
     if( !nombre, !marca, !modelo ) {
         res.status(400).json({ msg: 'Todos los campos son necesarios'});
@@ -102,7 +102,8 @@ const nuevoIngresoHerramienta = async (req, res, next) => {
             clienteContactoId,
             guiaDespacho,
             fechaGuiaDespacho,
-            usuario
+            usuario,
+            usuarioId
         });
 
         const dir = `./public/${otin}`
@@ -125,14 +126,21 @@ const nuevoIngresoHerramienta = async (req, res, next) => {
 // filtro por otin(text), nombre(text), marca(text), modelo(text), numero interno(text), fecha ingreso(selected), nombre cliente(selected), numero serie(text), tipo herramienta(selected)
 const ingresosFiltroTodos = async (req, res, next) => {
     
-    await eliminarDuplicado();
+    //await eliminarDuplicado();
 
     const { fecha, otin, nombre, marca, modelo, numeroInterno, numeroSerie, empresaId, tipoHerramientaId, activo } = req.body;
     
+    const { id } = req.params;
+
     const offset = (parseInt(req.params.offset) || 0) * 20;
 
     let where = {}
     let include = [];
+    if ( id != 0 ) {
+        where.usuarioId = {
+            id : id
+        }
+    }
 
     if( fecha !== '' && fecha ) {
         where.fecha = {

@@ -202,6 +202,27 @@ const actulizarConclusion = async ( req, res ) => {
     return res.status(200);
 }
 
+const getTipoHerramientaSelect = async ( req, res ) => {
+
+    try {
+        
+        const tipoHerramientas = await TipoHerramienta.findAll({ order: [[ 'nombre', 'ASC' ]] });
+
+        const data = [];
+
+        for (const tipoHerramienta of tipoHerramientas) {
+            data.push({ value: tipoHerramienta.id, text: tipoHerramienta.nombre })
+        }
+
+        return res.status(200).json(data);
+
+    } catch (error) {
+        console.error(error)
+        return res.status(400).json({ msg: 'Error al traer los tipo de herramientas' });
+    }
+
+}
+
 export {
     nuevoTipoHerramienta,
     obtenerNombreTodosTipo,
@@ -213,5 +234,6 @@ export {
     fallaTipoHerramienta,
     actulizarFalla,
     actulizarRecomendacion,
-    actulizarConclusion
+    actulizarConclusion,
+    getTipoHerramientaSelect
 }

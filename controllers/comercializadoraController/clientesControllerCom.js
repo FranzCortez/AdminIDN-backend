@@ -395,6 +395,50 @@ const contactoInfoCom = async (req, res, next) => {
     return res.status(200).json(contacto);
 }
 
+const getClientesSelect = async ( req, res ) => {
+
+    try {
+        
+        const clientes = await ClienteEmpresaCom.findAll({ where: { activo: 1 }, order: [[ 'nombre', 'ASC' ]] });
+
+        const data = [];
+
+        for (const cliente of clientes) {
+            data.push({ value: cliente.id, text: cliente.nombre })
+        }
+
+        return res.status(200).json(data);
+
+    } catch (error) {
+        console.error(error)
+        return res.status(400).json({ msg: 'Error al traer los clientes' });
+    }
+
+}
+
+const getClienteContactosSelect = async ( req, res ) => {
+
+    try {
+        
+        const { id } = req.params;
+
+        const clientes = await ClienteContactoCom.findAll({ where: { activo: 1, clienteEmpresaComId: id }, order: [[ 'nombre', 'ASC' ]] });
+
+        const data = [];
+
+        for (const cliente of clientes) {
+            data.push({ value: cliente.id, text: cliente.nombre })
+        }
+
+        return res.status(200).json(data);
+
+    } catch (error) {
+        console.error(error)
+        return res.status(400).json({ msg: 'Error al traer los clientes contacto' });
+    }
+
+}
+
 export {
     nuevoClienteEmpresaCom,
     buscarEmpresaExiste,
@@ -410,5 +454,7 @@ export {
     obtenerContactoEspecificoCom,
     actualizarContactoEmpresaCom,
     eliminarContactoEmpresaCom,
-    contactoInfoCom
+    contactoInfoCom,
+    getClientesSelect,
+    getClienteContactosSelect
 }

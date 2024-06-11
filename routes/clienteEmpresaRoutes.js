@@ -1,5 +1,5 @@
 import express from "express";
-import { nuevoClienteEmpresa, todosClienteEmpresa, encontrarClienteEmpresa, actualizarClienteEmpresa, eliminarClienteEmpresa, buscarPorNombre, todosNombres } from "../controllers/clienteEmpresaController.js";
+import { nuevoClienteEmpresa, todosClienteEmpresa, encontrarClienteEmpresa, actualizarClienteEmpresa, eliminarClienteEmpresa, buscarPorNombre, todosNombres, nombreEmpresaSelect } from "../controllers/clienteEmpresaController.js";
 import { auth } from "../middleware/auth.js";
 
 const router = express.Router();
@@ -23,5 +23,7 @@ router.delete('/empresa/:id',auth , eliminarClienteEmpresa);
 router.get('/empresaBuscar/:nombre',auth , buscarPorNombre);
 
 router.get('/empresaNombre',auth , todosNombres);
+
+router.get('/empresaNombre/select', auth, nombreEmpresaSelect);
 
 export default router;

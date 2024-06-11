@@ -1,5 +1,5 @@
 import express from "express";
-import { nuevoTipoHerramienta,obtenerInfo, obtenerNombreTodosTipo, obtenerInformacionTipo, actualizarTipoHerramienta, eliminarTipoHerramienta, buscarPorNombre, fallaTipoHerramienta, actulizarFalla, actulizarRecomendacion, actulizarConclusion } from "../controllers/tipoHerramientaController.js";
+import { nuevoTipoHerramienta,obtenerInfo, obtenerNombreTodosTipo, obtenerInformacionTipo, actualizarTipoHerramienta, eliminarTipoHerramienta, buscarPorNombre, fallaTipoHerramienta, actulizarFalla, actulizarRecomendacion, actulizarConclusion, getTipoHerramientaSelect } from "../controllers/tipoHerramientaController.js";
 import { auth } from "../middleware/auth.js";
 
 const router = express.Router();
@@ -34,5 +34,7 @@ router.put('/recomendacion/:id', auth, actulizarRecomendacion);
 
 // actualiza conclusion
 router.put('/conclusion/:id', auth, actulizarConclusion);
+
+router.get('/tipoherramienta/select', auth, getTipoHerramientaSelect);
 
 export default router;

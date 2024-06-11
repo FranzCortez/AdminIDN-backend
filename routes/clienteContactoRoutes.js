@@ -1,5 +1,5 @@
 import express from "express";
-import { crearClienteContacto, obtenerContactosPorEmpresa, obtenerContactoEspecifico, actualizarContactoEmpresa, eliminarContactoEmpresa, contactoInfo } from "../controllers/clienteContactoController.js";
+import { crearClienteContacto, obtenerContactosPorEmpresa, obtenerContactoEspecifico, actualizarContactoEmpresa, eliminarContactoEmpresa, contactoInfo, nombreContactosSelect } from "../controllers/clienteContactoController.js";
 import { auth } from "../middleware/auth.js";
 
 const router = express.Router();
@@ -21,5 +21,7 @@ router.delete('/contacto/:idEmpresa/:id',auth , eliminarContactoEmpresa);
 
 // obtiene 1 contacto por su id
 router.get('/contacto/info/:id',auth , contactoInfo);
+
+router.get('/contactoNombre/select/:id', auth, nombreContactosSelect);
 
 export default router;

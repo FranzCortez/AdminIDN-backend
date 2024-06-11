@@ -11,7 +11,7 @@ const crearUsuario = async (req, res, next) => {
         return next();
     }
     
-    const { nombre, rut, email, tipo, telefono } = req.body;
+    const { nombre, rut, email, tipo, telefono, color } = req.body;
 
     if(!nombre || !rut || !email || !tipo || tipo < 0 || tipo > 3){
         res.status(404).json({msg: 'Faltan datos'});
@@ -25,12 +25,6 @@ const crearUsuario = async (req, res, next) => {
     const password = primerNombre + process.env.PASSWORD;
     
     try {
-
-        let clienteEmpresaId = null;
-
-        if(tipo == 3) {
-            clienteEmpresaId = req.body.clienteEmpresaId;
-        }
 
         const validarUsuario = await Usuario.findOne({ where: {rut : rutLimpio} });
 
@@ -46,7 +40,8 @@ const crearUsuario = async (req, res, next) => {
             telefono,
             email,
             tipo,
-            clienteEmpresaId
+            clienteEmpresaId: null,
+            color
         });
 
         res.status(200).json({ msg: `Usuario ${nombre} creado correctamente!`});
@@ -66,7 +61,7 @@ const todosUsuarios = async (req, res, next) => {
 
     const offset = (parseInt(req.params.pag) || 0) * 10;
 
-    const usuarios = await Usuario.scope('eliminarPass').findAll({ offset: offset, limit: 10});
+    const usuarios = await Usuario.scope('eliminarPass').findAll({ where: { activo: 1 }, offset: offset, limit: 10});
 
     const cantUsuarios = await Usuario.scope('eliminarPass').findAll({});
 
@@ -99,7 +94,7 @@ const editarUsuario = async (req, res, next) => {
         return next();
     }
     
-    const { nombre, rut, email, tipo, telefono, clienteEmpresaId } = req.body; 
+    const { nombre, rut, email, tipo, telefono, clienteEmpresaId, color } = req.body; 
 
     if(!nombre || !rut || !email || !tipo || tipo < 0 || tipo > 3){
         res.status(501).json({msg: 'Todos los campos son necesarios'});
@@ -131,6 +126,7 @@ const editarUsuario = async (req, res, next) => {
     usuario.tipo = tipo;
     usuario.telefono = telefono;
     usuario.clienteEmpresaId = clienteEmpresaId;
+    usuario.color = color;
 
     await usuario.save();
 
@@ -145,12 +141,15 @@ const eliminarUsuario = async (req, res, next) => {
         return next();
     }
 
-    const usuario = await Usuario.destroy({ where: {id: req.params.id}});
+    const usuario = await Usuario.findByPk(req.params.id);
 
     if(!usuario){
         res.status(404).json({ msg: 'Usuario no existe'});
         return next();
     }
+
+    usuario.activo = 0;
+    await usuario.save();
 
     res.status(200).json({ msg: 'Usuario Eliminado Correctamente'});
 }

@@ -161,11 +161,30 @@ const contactoInfo = async (req, res, next) => {
     return res.status(200).json(contacto);
 }
 
+const nombreContactosSelect = async ( req, res ) => {
+
+    const { id } = req.params;
+
+    const contactos = await ClienteContacto.findAll({
+        where: { activo: 1, clienteEmpresaId: id },
+        order: [[ 'nombre', 'ASC' ]]
+    });
+
+    const data = [];
+
+    for (const contacto of contactos) {
+        data.push({ value: contacto.id, text: contacto.nombre })
+    }
+
+    return res.status(200).json(data);
+}
+
 export {
     crearClienteContacto,
     obtenerContactosPorEmpresa,
     obtenerContactoEspecifico,
     actualizarContactoEmpresa,
     eliminarContactoEmpresa,
-    contactoInfo
+    contactoInfo,
+    nombreContactosSelect
 }
