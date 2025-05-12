@@ -61,6 +61,15 @@ const Herramienta = db.define('herramienta', {
     usuarioId: {
         type: DataTypes.INTEGER,
         allowNull: true
+    },
+    salida: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: false
+    },
+    archivoSalida: {
+        type: DataTypes.STRING,
+        allowNull: true
     }
 }, {
     timestamps: false,

@@ -6,8 +6,6 @@ const Op = Sequelize.Op;
 // agrega un nuevo cliente empresa y retorna la id
 const nuevoClienteEmpresa = async (req, res, next) => {
 
-    // TODO: Permisos
-
     const {nombre: nombreEmpresa, razonSocial, rut, direccion } = req.body;
 
     if(!nombreEmpresa || !razonSocial || !rut || !direccion){
@@ -30,7 +28,8 @@ const nuevoClienteEmpresa = async (req, res, next) => {
             nombre: nombreEmpresa,
             rut: rutLimpio,
             razonSocial,
-            direccion
+            direccion,
+            activo: 1
         });
 
         res.status(200).json({ msg: `Cliente ${nombreEmpresa} creada correctamente!`, id: empresa.dataValues.id});

@@ -39,7 +39,8 @@ const crearClienteContacto = async (req, res, next) => {
             telefono,
             correo,
             cargo,
-            clienteEmpresaId: id
+            clienteEmpresaId: id,
+            activo: 1
         });
 
         res.status(200).json({ msg: `Contacto ${nombre} creado correctamente!`});

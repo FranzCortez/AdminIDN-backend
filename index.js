@@ -27,8 +27,8 @@ const app = express();
 app.use(express.static('public'));
 
 // Habilitar lectura de datos
-app.use( bodyParser.urlencoded({ extended: true }));
-app.use( bodyParser.json());
+app.use( bodyParser.urlencoded({ extended: true, limit: '100mb' }));
+app.use( bodyParser.json({limit: '100mb'}));
 
 // Habilitar cors
 const whitelist = [process.env.FRONTEND_URL, process.env.FRONTEND_URL2];

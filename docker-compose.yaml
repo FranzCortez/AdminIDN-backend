@@ -1,0 +1,16 @@
+version: '3.8'
+services:
+  db:
+    image: mysql:latest
+    environment:
+      MYSQL_ROOT_PASSWORD: ${BD_PASSWORD}
+      MYSQL_DATABASE: impactonortedb
+      MYSQL_USER: ${BD_USER}
+      MYSQL_PASSWORD: ${BD_PASSWORD}
+    volumes:
+      - ./data:/var/lib/mysql
+    ports:
+      - 3306:3306
+
+volumes:
+  data:

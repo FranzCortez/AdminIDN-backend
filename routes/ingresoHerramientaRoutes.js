@@ -1,5 +1,5 @@
 import express from "express";
-import { obtenerOtin, nuevoIngresoHerramienta, ingresosFiltroTodos, ingresoInfo, editarInfo, subirArchivo, cotizacion, obtenerArchivo, ingresoIdEmpresa, guardarPreinforme, obtenerFallaPreinforme, obtenerTecnicoPreinforme, actualizarPreinforme, obtenerPreinforme, obtenerIngresoMes, obtenerOtinManual } from "../controllers/ingresoHerramientaController.js";
+import { obtenerOtin, nuevoIngresoHerramienta, ingresosFiltroTodos, ingresoInfo, editarInfo, subirArchivo, cotizacion, obtenerArchivo, ingresoIdEmpresa, guardarPreinforme, obtenerFallaPreinforme, obtenerTecnicoPreinforme, actualizarPreinforme, obtenerPreinforme, obtenerIngresoMes, obtenerOtinManual, obtenerOtinTarjeta, infoChecklist, guardarChechlistSalida } from "../controllers/ingresoHerramientaController.js";
 import { subirFoto, nuevoArchivoFoto, obtenerFoto, eliminarFotos, fotoBase } from "../controllers/fotoGaleriaController.js";
 import { subirInforme, guardarInforme, obtenerInforme, guardarDatosInforme, obtenerDatosInforme, obtenerConclusionInforme } from "../controllers/informeController.js";
 import { subirCertificado, guardarCertificado, obtenerCertificado } from "../controllers/certificadoController.js";
@@ -87,5 +87,13 @@ router.post('/ingreso/mes', auth, obtenerIngresoMes);
 
 // obtener otin manual
 router.post('/manual/otin', auth, obtenerOtinManual);
+
+router.post('/ingreso/tarjeta', auth, obtenerOtinTarjeta);
+
+// obtener info checklist
+router.get('/doc/checklist/info/:id', auth, infoChecklist);
+
+// Guardar checklist
+router.post('/doc/checklist/:id', auth, subirArchivo, guardarChechlistSalida);
 
 export default router;

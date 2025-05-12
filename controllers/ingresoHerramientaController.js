@@ -23,6 +23,7 @@ const fileFilter = {
 }
 const Storage = multer.diskStorage({
     destination: function (req, file, cb) {
+        console.log(file.originalname);
         let dir = `public/${file.originalname.split(" ")[1].split(".")[0]}`;
         if (!fs.existsSync(dir)) {         
             fs.mkdirSync(dir);
@@ -618,6 +619,96 @@ const obtenerOtinManual = async (req, res) => {
     }
 }
 
+const obtenerOtinTarjeta = async (req, res) => {
+    try {
+        
+        const { otin } = req.body;
+
+        const info = await Herramienta.findOne({ 
+            attributes: ['fecha', 'otin', 'modelo', 'marca', 'numeroSerie', 'numeroInterno', 'id'],
+            where: { otin },
+            include: [
+                {
+                    model: TipoHerramienta,
+                    attributes: ['nombre']
+                },
+                {
+                    model: ClienteContacto,
+                    attributes: ['nombre'],
+                    include: {
+                        model: ClienteEmpresa,
+                        attributes: ['nombre']
+                    }
+                }
+            ]
+        });
+
+        const preinforme = await Preinforme.scope('tecnico').findOne({ where: { herramientumId: info.id } });
+
+        return res.status(200).json({
+            ...info.dataValues,
+            tecnico: preinforme?.tecnico ?? ''
+        });
+
+    } catch (error) {
+        console.error(error);
+        return res.status(404).json({msg: 'Error al obtener OTIN'});
+    }
+}
+
+const infoChecklist = async (req, res) => {
+    const { id } = req.params;
+
+    if(!id) {
+        res.status(404).json({ msg: 'Faltan parametros' });
+        return next();
+    }
+
+    const ingreso = await Herramienta.findOne( { 
+        where:  { id }, 
+        include: [
+            {
+                model: ClienteContacto,
+                attributes: ['nombre'],
+            },
+            {
+                model: TipoHerramienta,
+                attributes: ['id', 'nombre']
+            }
+        ]
+    });
+
+    if(!ingreso){
+        res.status(404).json({ msg: 'No existe'});
+        return next();
+    }
+
+    const preinforme = await Preinforme.scope('tecnico').findOne({ where: { herramientumId: ingreso.id } });
+
+    return res.status(200).json({
+        otin: ingreso.otin,
+        tecnico: preinforme?.tecnico ?? '',
+        cliente: ingreso.clienteContacto.nombre,
+        tipoHerramienta: ingreso.tipoHerramientum.nombre,
+        marca: ingreso.marca,
+        modelo: ingreso.modelo,
+        numeroInterno: ingreso.numeroInterno,
+        numeroSerie: ingreso.numeroSerie,
+    });
+}
+
+const guardarChechlistSalida = async (req, res) => {
+
+    const { id } = req.params;
+
+    const ingreso = await Herramienta.findOne({ where: { id } });
+
+    ingreso.archivoSalida = `/${ingreso.otin}/salida_OTIN ${ingreso.otin}.pdf`; 
+    await ingreso.save();
+
+    return res.status(200).json({ msg: 'Informe generado y guardado con exito.' });
+}
+
 export {
     obtenerOtin,
     nuevoIngresoHerramienta,
@@ -635,4 +726,7 @@ export {
     actualizarPreinforme,
     obtenerIngresoMes,
     obtenerOtinManual,
+    obtenerOtinTarjeta,
+    infoChecklist,
+    guardarChechlistSalida
 }
